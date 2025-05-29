@@ -1,10 +1,12 @@
 import { FormInput } from "@/components/FormInput";
 import { step1Schema, step2Schema, step3Schema } from "@/schemas/signup";
+import { signUp } from "@/store/singUpStore";
 import { SignUpType } from "@/types/auth-data";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
+import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import {
@@ -34,10 +36,22 @@ export default function SignUpScreen() {
     step === 1
       ? (step1Schema as ZodType<Partial<SignUpType>>)
       : step === 2
-        ? (step2Schema as ZodType<Partial<SignUpType>>)
-        : (step3Schema as ZodType<Partial<SignUpType>>);
+      ? (step2Schema as ZodType<Partial<SignUpType>>)
+      : (step3Schema as ZodType<Partial<SignUpType>>);
 
   const FORM_STORAGE_KEY = "@signup_form_data";
+
+  const handleCreateAccount = async (formData: Partial<SignUpType>) => {
+    try {
+      await signUp(formData as SignUpType);
+      alert("Conta criada com sucesso!");
+      reset();
+      AsyncStorage.removeItem(FORM_STORAGE_KEY); 
+      router.push("/(not-authenticated)/signin/page");
+    } catch (error: any) {
+      alert(error.message || "Erro ao criar conta.");
+    }
+  };
 
   const {
     control,
@@ -459,6 +473,7 @@ export default function SignUpScreen() {
               label="Endereço"
               buttonNextText="Criar conta"
               buttonPreviousText="Voltar"
+              onSubmit={handleSubmit(handleCreateAccount)} // chama o cadastro
             >
               <View style={styles.formContainer}>
                 <Text style={styles.title}>Endereço</Text>
@@ -534,20 +549,20 @@ export default function SignUpScreen() {
                 />
 
                 {/* <View style={styles.buttonsRow}>
-                <TouchableOpacity onPress={onBack} style={styles.backButton}>
-                  <Text style={styles.backButtonText}>Voltar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={handleSubmit(onSubmit)}
-                  style={[
-                    styles.nextButton,
-                    !isStepValid() && styles.disabledButton,
-                  ]}
-                  disabled={!isStepValid()}
-                >
-                  <Text style={styles.nextButtonText}>Criar conta</Text>
-                </TouchableOpacity>
-              </View> */}
+                  <TouchableOpacity onPress={onBack} style={styles.backButton}>
+                    <Text style={styles.backButtonText}>Voltar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={handleSubmit(onSubmit)}
+                    style={[
+                      styles.nextButton,
+                      !isStepValid() && styles.disabledButton,
+                    ]}
+                    disabled={!isStepValid()}
+                  >
+                    <Text style={styles.nextButtonText}>Criar conta</Text>
+                  </TouchableOpacity>
+                </View> */}
               </View>
             </ProgressStep>
           </ProgressSteps>
@@ -560,7 +575,12 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "white" },
   scroll: { paddingBottom: 100, width: "100%" },
-  containerLogo: { alignItems: "center", width: "100%", marginBottom: 20, paddingTop: 80 },
+  containerLogo: {
+    alignItems: "center",
+    width: "100%",
+    marginBottom: 20,
+    paddingTop: 80,
+  },
   formContainer: {
     width: "85%",
     backgroundColor: "white",
