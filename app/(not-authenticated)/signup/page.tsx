@@ -34,8 +34,8 @@ export default function SignUpScreen() {
     step === 1
       ? (step1Schema as ZodType<Partial<SignUpType>>)
       : step === 2
-      ? (step2Schema as ZodType<Partial<SignUpType>>)
-      : (step3Schema as ZodType<Partial<SignUpType>>);
+        ? (step2Schema as ZodType<Partial<SignUpType>>)
+        : (step3Schema as ZodType<Partial<SignUpType>>);
 
   const FORM_STORAGE_KEY = "@signup_form_data";
 
@@ -560,7 +560,7 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "white" },
   scroll: { paddingBottom: 100, width: "100%" },
-  containerLogo: { alignItems: "center", width: "100%", marginBottom: 120 },
+  containerLogo: { alignItems: "center", width: "100%", marginBottom: 20, paddingTop: 80 },
   formContainer: {
     width: "85%",
     backgroundColor: "white",
