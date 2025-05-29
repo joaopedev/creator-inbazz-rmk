@@ -23,6 +23,19 @@ export default function RootLayout() {
             headerStyle: { backgroundColor: "#ffffff" },
           }}
         />
+        <Stack.Screen
+          name="(not-authenticated)/forgot-password/page"
+          options={{
+            headerShown: false,
+            headerBackTitle: "Voltar",
+            headerTitle: "Recuperar senha",
+            headerTitleAlign: "center",
+            headerTitleStyle: { fontSize: 20 },
+            headerTintColor: "white",
+            headerStyle: { backgroundColor: "#ffffff" },
+          }}
+        />
+        <Stack.Screen name="(authenticated)/home/page" />
       </Stack>
     </View>
   );
