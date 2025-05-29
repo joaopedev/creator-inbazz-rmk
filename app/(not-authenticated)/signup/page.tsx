@@ -18,6 +18,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { ProgressStep, ProgressSteps } from "react-native-progress-steps";
 import { ZodType } from "zod";
 
 export default function SignUpScreen() {
@@ -28,8 +29,6 @@ export default function SignUpScreen() {
     avatar: string;
     username: string;
   } | null>(null);
-
-  // Remove this line, as getValues should come from useForm, not useWatch
 
   const currentSchema =
     step === 1
@@ -80,7 +79,9 @@ export default function SignUpScreen() {
       complement: "",
     },
   });
+
   const instagramUsername = useWatch({ control, name: "instagram" });
+
   useEffect(() => {
     const loadFormData = async () => {
       const stored = await AsyncStorage.getItem(FORM_STORAGE_KEY);
@@ -108,13 +109,16 @@ export default function SignUpScreen() {
       const formData = new FormData();
       formData.append("user", instagramUsername);
 
-      const response = await fetch(
-        "https://n8n.buzzmates.com.br/webhook/set-tmp-user",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const instagramValidateUrl = process.env.EXPO_PUBLIC_INSTAGRAM_VALIDATE;
+      if (!instagramValidateUrl) {
+        throw new Error(
+          "Instagram validation URL is not defined in environment variables."
+        );
+      }
+      const response = await fetch(instagramValidateUrl, {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) {
         throw new Error("Erro na resposta da API");
@@ -177,20 +181,6 @@ export default function SignUpScreen() {
     return [];
   };
 
-  const isStepValid = () => {
-    const fields = getStepFields(step);
-    return fields.every((field) => {
-      const value = (watch() as any)[field];
-      const hasError = !!errors[field];
-
-      if (typeof value === "boolean") {
-        return !hasError;
-      }
-
-      return value !== undefined && value !== "" && !hasError;
-    });
-  };
-
   const markStepFieldsTouched = () => {
     const fields = getStepFields(step);
     fields.forEach((field) => {
@@ -198,33 +188,6 @@ export default function SignUpScreen() {
       setValue(field, currentValue, { shouldTouch: true });
     });
   };
-
-  const validateAndNextStep = async () => {
-    markStepFieldsTouched();
-    const fields = getStepFields(step);
-    const valid = await trigger(fields);
-    if (valid) {
-      if (step < 3) {
-        setStep(step + 1);
-      } else {
-        handleSubmit(onSubmit)();
-      }
-    }
-  };
-
-  const onSubmit = async (data: Partial<SignUpType>) => {
-    console.log("Dados enviados:", data);
-    await AsyncStorage.removeItem(FORM_STORAGE_KEY);
-  };
-
-  const onBack = () => {
-    if (step > 1) setStep(step - 1);
-  };
-
-  useEffect(() => {
-    console.log("Errors:", errors);
-    console.log("Touched Fields:", touchedFields);
-  }, [errors, touchedFields]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -241,177 +204,158 @@ export default function SignUpScreen() {
             />
           </View>
 
-          <View style={styles.stepsIndicator}>
-            {[1, 2, 3].map((num) => (
-              <View key={num} style={styles.stepWrapper}>
-                <Text
-                  style={[
-                    styles.stepNumber,
-                    step === num ? styles.activeStepNumber : {},
-                  ]}
-                >
-                  {num}
+          <ProgressSteps activeStep={step - 1}>
+            {/* Step 1 */}
+            <ProgressStep
+              label="Dados de conta"
+              buttonNextText="Avançar"
+              buttonNextTextColor="#fff"
+            >
+              <View style={styles.formContainer}>
+                <Text style={styles.title}>Vamos começar!</Text>
+                <Text style={styles.subtitle}>
+                  Preencha o formulário abaixo para criar sua conta
                 </Text>
-                <Text
-                  style={[
-                    styles.stepLabel,
-                    step === num ? styles.activeStepLabel : {},
-                  ]}
-                >
-                  {num === 1
-                    ? "Dados de conta"
-                    : num === 2
-                    ? "Dados pessoais"
-                    : "Endereço"}
-                </Text>
-                {num < 3 && <View style={styles.stepLine} />}
+
+                <FormInput
+                  label="Nome"
+                  name="name"
+                  placeholder="Digite seu nome"
+                  error={touchedFields.name ? errors.name?.message : ""}
+                  required
+                  control={control}
+                />
+                <FormInput
+                  label="Sobrenome"
+                  name="lastName"
+                  placeholder="Digite seu sobrenome"
+                  error={touchedFields.lastName ? errors.lastName?.message : ""}
+                  required
+                  control={control}
+                  paddingTopLabel={20}
+                />
+                <FormInput
+                  label="CPF"
+                  name="cpf"
+                  placeholder="Digite seu CPF"
+                  error={touchedFields.cpf ? errors.cpf?.message : ""}
+                  required
+                  control={control}
+                  paddingTopLabel={20}
+                  keyboardType="numeric"
+                />
+                <FormInput
+                  label="Nome do usuário"
+                  name="username"
+                  placeholder="Digite o nome do usuário"
+                  error={touchedFields.username ? errors.username?.message : ""}
+                  required
+                  control={control}
+                  paddingTopLabel={20}
+                />
+                <FormInput
+                  label="Email"
+                  name="email"
+                  placeholder="Digite seu email"
+                  error={touchedFields.email ? errors.email?.message : ""}
+                  required
+                  control={control}
+                  paddingTopLabel={20}
+                />
+                <FormInput
+                  label="Confirme seu email"
+                  name="confirmEmail"
+                  placeholder="Confirme seu email"
+                  error={
+                    touchedFields.confirmEmail
+                      ? errors.confirmEmail?.message
+                      : ""
+                  }
+                  required
+                  control={control}
+                  paddingTopLabel={20}
+                />
+                <FormInput
+                  label="Senha"
+                  name="password"
+                  placeholder="Mínimo de 8 caracteres, maiúsculas, minúsculas, números e símbolos"
+                  error={touchedFields.password ? errors.password?.message : ""}
+                  secureTextEntry={!showPassword}
+                  required
+                  control={control}
+                  iconRight={
+                    <Ionicons
+                      name={showPassword ? "eye-outline" : "eye-off-outline"}
+                      size={24}
+                      onPress={() => setShowPassword(!showPassword)}
+                    />
+                  }
+                  paddingTopLabel={20}
+                />
+                <FormInput
+                  label="Instagram"
+                  name="instagram"
+                  placeholder="Insira seu Instagram"
+                  required
+                  control={control}
+                  paddingTopLabel={20}
+                  buttonRight={
+                    isInstagramValid && instagramData ? (
+                      <View style={styles.instagramValidContainer}>
+                        <Image
+                          source={{ uri: instagramData.avatar }}
+                          style={styles.instagramAvatar}
+                        />
+                        <Text style={styles.instagramUsername}>
+                          @{instagramData.username}
+                        </Text>
+                        <Ionicons name="checkmark" size={18} color="green" />
+                      </View>
+                    ) : (
+                      <TouchableOpacity
+                        onPress={validateInstagram}
+                        style={styles.instagramValidateButton}
+                      >
+                        <Text style={styles.instagramValidateButtonText}>
+                          Validar
+                        </Text>
+                      </TouchableOpacity>
+                    )
+                  }
+                />
+                <FormInput
+                  label="TikTok"
+                  name="tiktok"
+                  placeholder="Digite seu TikTok"
+                  error={touchedFields.tiktok ? errors.tiktok?.message : ""}
+                  control={control}
+                  paddingTopLabel={20}
+                />
+
+                {/* <View style={[styles.buttonsRow, { marginTop: 30 }]}>
+                  <View style={{ flex: 1 }} />
+                  <TouchableOpacity
+                    onPress={validateAndNextStep}
+                    style={[
+                      styles.nextButton,
+                      !isStepValid() && styles.disabledButton,
+                    ]}
+                    disabled={!isStepValid()}
+                  >
+                    <Text style={styles.nextButtonText}>Avançar</Text>
+                  </TouchableOpacity>
+                </View> */}
               </View>
-            ))}
-          </View>
+            </ProgressStep>
 
-          {/* Step 1 */}
-          {step === 1 && (
-            <View style={styles.formContainer}>
-              <Text style={styles.title}>Vamos começar!</Text>
-              <Text style={styles.subtitle}>
-                Preencha o formulário abaixo para criar sua conta
-              </Text>
-
-              <FormInput
-                label="Nome"
-                name="name"
-                placeholder="Digite seu nome"
-                error={touchedFields.name ? errors.name?.message : ""}
-                required
-                control={control}
-              />
-              <FormInput
-                label="Sobrenome"
-                name="lastName"
-                placeholder="Digite seu sobrenome"
-                error={touchedFields.lastName ? errors.lastName?.message : ""}
-                required
-                control={control}
-                paddingTopLabel={20}
-              />
-              <FormInput
-                label="CPF"
-                name="cpf"
-                placeholder="Digite seu CPF"
-                error={touchedFields.cpf ? errors.cpf?.message : ""}
-                required
-                control={control}
-                paddingTopLabel={20}
-                keyboardType="numeric"
-              />
-              <FormInput
-                label="Nome do usuário"
-                name="username"
-                placeholder="Digite o nome do usuário"
-                error={touchedFields.username ? errors.username?.message : ""}
-                required
-                control={control}
-                paddingTopLabel={20}
-              />
-              <FormInput
-                label="Email"
-                name="email"
-                placeholder="Digite seu email"
-                error={touchedFields.email ? errors.email?.message : ""}
-                required
-                control={control}
-                paddingTopLabel={20}
-              />
-              <FormInput
-                label="Confirme seu email"
-                name="confirmEmail"
-                placeholder="Confirme seu email"
-                error={
-                  touchedFields.confirmEmail ? errors.confirmEmail?.message : ""
-                }
-                required
-                control={control}
-                paddingTopLabel={20}
-              />
-              <FormInput
-                label="Senha"
-                name="password"
-                placeholder="Mínimo de 8 caracteres, maiúsculas, minúsculas, números e símbolos"
-                error={touchedFields.password ? errors.password?.message : ""}
-                secureTextEntry={!showPassword}
-                required
-                control={control}
-                iconRight={
-                  <Ionicons
-                    name={showPassword ? "eye-outline" : "eye-off-outline"}
-                    size={24}
-                    onPress={() => setShowPassword(!showPassword)}
-                  />
-                }
-                paddingTopLabel={20}
-              />
-              <FormInput
-                label="Instagram"
-                name="instagram"
-                placeholder="Insira seu Instagram"
-                required
-                control={control}
-                paddingTopLabel={20}
-                buttonRight={
-                  isInstagramValid && instagramData ? (
-                    <View style={styles.instagramValidContainer}>
-                      <Image
-                        source={{ uri: instagramData.avatar }}
-                        style={styles.instagramAvatar}
-                      />
-                      <Text style={styles.instagramUsername}>
-                        @{instagramData.username}
-                      </Text>
-                      <Ionicons name="checkmark" size={18} color="green" />
-                    </View>
-                  ) : (
-                    <TouchableOpacity
-                      onPress={validateInstagram}
-                      style={styles.instagramValidateButton}
-                    >
-                      <Text style={styles.instagramValidateButtonText}>
-                        Validar
-                      </Text>
-                    </TouchableOpacity>
-                  )
-                }
-              />
-              <FormInput
-                label="TikTok"
-                name="tiktok"
-                placeholder="Digite seu TikTok"
-                error={touchedFields.tiktok ? errors.tiktok?.message : ""}
-                control={control}
-                paddingTopLabel={20}
-              />
-
-              <View style={[styles.buttonsRow, { marginTop: 30 }]}>
-                <View style={{ flex: 1 }} />
-                <TouchableOpacity
-                  onPress={validateAndNextStep}
-                  style={[
-                    styles.nextButton,
-                    !isStepValid() && styles.disabledButton,
-                  ]}
-                  disabled={!isStepValid()}
-                >
-                  <Text style={styles.nextButtonText}>Avançar</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-
-          {/* Step 2 */}
-          {step === 2 && (
-            <View style={styles.formContainer}>
-              <Text style={styles.title}>Agora, alguns dados pessoais</Text>
-
-              <View style={styles.inlineRow}>
+            {/* Step 2 */}
+            <ProgressStep
+              label="Dados Pessoais"
+              buttonNextText="Avançar"
+              buttonPreviousText="Voltar"
+            >
+              <View style={styles.formContainer}>
+                <Text style={styles.title}>Agora, alguns dados pessoais</Text>
                 <FormInput
                   label="DDD"
                   name="phoneDDD"
@@ -432,158 +376,164 @@ export default function SignUpScreen() {
                   control={control}
                   keyboardType="phone-pad"
                 />
-              </View>
+                <FormInput
+                  label="Data de nascimento"
+                  name="birthDate"
+                  placeholder="DD/MM/AAAA"
+                  error={
+                    touchedFields.birthDate ? errors.birthDate?.message : ""
+                  }
+                  required
+                  control={control}
+                  paddingTopLabel={20}
+                />
 
-              <FormInput
-                label="Data de nascimento"
-                name="birthDate"
-                placeholder="DD/MM/AAAA"
-                error={touchedFields.birthDate ? errors.birthDate?.message : ""}
-                required
-                control={control}
-                paddingTopLabel={20}
-              />
+                <Text style={styles.label}>Gênero</Text>
+                <Controller
+                  control={control}
+                  name="gender"
+                  render={({ field: { value, onChange } }) => (
+                    <Picker
+                      selectedValue={value}
+                      onValueChange={onChange}
+                      style={styles.picker}
+                    >
+                      <Picker.Item
+                        label="Prefiro não dizer"
+                        value="Prefiro não dizer"
+                      />
+                      <Picker.Item label="Masculino" value="Masculino" />
+                      <Picker.Item label="Feminino" value="Feminino" />
+                      <Picker.Item label="Não binário" value="Não binário" />
+                      <Picker.Item label="Outro" value="Outro" />
+                    </Picker>
+                  )}
+                />
 
-              <Text style={styles.label}>Gênero</Text>
-              <Controller
-                control={control}
-                name="gender"
-                render={({ field: { value, onChange } }) => (
-                  <Picker
-                    selectedValue={value}
-                    onValueChange={onChange}
-                    style={styles.picker}
+                <FormInput
+                  label="Sobre você"
+                  name="aboutYou"
+                  placeholder="Fale sobre seus gostos, hobbies, rotina..."
+                  error={touchedFields.aboutYou ? errors.aboutYou?.message : ""}
+                  control={control}
+                  paddingTopLabel={20}
+                />
+
+                <Text style={styles.label}>É agenciado</Text>
+                <Controller
+                  control={control}
+                  name="isAgented"
+                  render={({ field: { value, onChange } }) => (
+                    <Picker
+                      selectedValue={value}
+                      onValueChange={onChange}
+                      style={styles.picker}
+                    >
+                      <Picker.Item label="Não" value="Não" />
+                      <Picker.Item label="Sim" value="Sim" />
+                      <Picker.Item label="Prefiro não dizer" value="" />
+                    </Picker>
+                  )}
+                />
+
+                {/* <View style={styles.buttonsRow}>
+                  <TouchableOpacity onPress={onBack} style={styles.backButton}>
+                    <Text style={styles.backButtonText}>Voltar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={validateAndNextStep}
+                    style={[
+                      styles.nextButton,
+                      !isStepValid() && styles.disabledButton,
+                    ]}
+                    disabled={!isStepValid()}
                   >
-                    <Picker.Item
-                      label="Prefiro não dizer"
-                      value="Prefiro não dizer"
-                    />
-                    <Picker.Item label="Masculino" value="Masculino" />
-                    <Picker.Item label="Feminino" value="Feminino" />
-                    <Picker.Item label="Não binário" value="Não binário" />
-                    <Picker.Item label="Outro" value="Outro" />
-                  </Picker>
-                )}
-              />
-
-              <FormInput
-                label="Sobre você"
-                name="aboutYou"
-                placeholder="Fale sobre seus gostos, hobbies, rotina..."
-                error={touchedFields.aboutYou ? errors.aboutYou?.message : ""}
-                control={control}
-                paddingTopLabel={20}
-              />
-
-              <Text style={styles.label}>É agenciado</Text>
-              <Controller
-                control={control}
-                name="isAgented"
-                render={({ field: { value, onChange } }) => (
-                  <Picker
-                    selectedValue={value}
-                    onValueChange={onChange}
-                    style={styles.picker}
-                  >
-                    <Picker.Item label="Não" value="Não" />
-                    <Picker.Item label="Sim" value="Sim" />
-                    <Picker.Item label="Prefiro não dizer" value="" />
-                  </Picker>
-                )}
-              />
-
-              <View style={styles.buttonsRow}>
-                <TouchableOpacity onPress={onBack} style={styles.backButton}>
-                  <Text style={styles.backButtonText}>Voltar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={validateAndNextStep}
-                  style={[
-                    styles.nextButton,
-                    !isStepValid() && styles.disabledButton,
-                  ]}
-                  disabled={!isStepValid()}
-                >
-                  <Text style={styles.nextButtonText}>Avançar</Text>
-                </TouchableOpacity>
+                    <Text style={styles.nextButtonText}>Avançar</Text>
+                  </TouchableOpacity>
+                </View> */}
               </View>
-            </View>
-          )}
+            </ProgressStep>
 
-          {/* Step 3 */}
-          {step === 3 && (
-            <View style={styles.formContainer}>
-              <Text style={styles.title}>Endereço</Text>
+            {/* Step 3 */}
+            <ProgressStep
+              label="Endereço"
+              buttonNextText="Criar conta"
+              buttonPreviousText="Voltar"
+            >
+              <View style={styles.formContainer}>
+                <Text style={styles.title}>Endereço</Text>
 
-              <FormInput
-                label="Estado"
-                name="state"
-                placeholder="Ex: São Paulo"
-                error={touchedFields.state ? errors.state?.message : ""}
-                required
-                control={control}
-              />
-              <FormInput
-                label="Cidade"
-                name="city"
-                placeholder="Ex: São Paulo"
-                error={touchedFields.city ? errors.city?.message : ""}
-                required
-                control={control}
-                paddingTopLabel={20}
-              />
-              <FormInput
-                label="CEP"
-                name="cep"
-                placeholder="00000-000"
-                error={touchedFields.cep ? errors.cep?.message : ""}
-                required
-                control={control}
-                paddingTopLabel={20}
-                keyboardType="numeric"
-              />
-              <FormInput
-                label="Bairro"
-                name="neighborhood"
-                placeholder="Digite seu bairro"
-                error={
-                  touchedFields.neighborhood ? errors.neighborhood?.message : ""
-                }
-                required
-                control={control}
-                paddingTopLabel={20}
-              />
-              <FormInput
-                label="Rua"
-                name="street"
-                placeholder="Digite sua rua"
-                error={touchedFields.street ? errors.street?.message : ""}
-                required
-                control={control}
-                paddingTopLabel={20}
-              />
-              <FormInput
-                label="Número"
-                name="number"
-                placeholder="Digite o número"
-                error={touchedFields.number ? errors.number?.message : ""}
-                required
-                control={control}
-                paddingTopLabel={20}
-                keyboardType="numeric"
-              />
-              <FormInput
-                label="Complemento"
-                name="complement"
-                placeholder="Complemento (opcional)"
-                error={
-                  touchedFields.complement ? errors.complement?.message : ""
-                }
-                control={control}
-                paddingTopLabel={20}
-              />
+                <FormInput
+                  label="Estado"
+                  name="state"
+                  placeholder="Ex: São Paulo"
+                  error={touchedFields.state ? errors.state?.message : ""}
+                  required
+                  control={control}
+                />
+                <FormInput
+                  label="Cidade"
+                  name="city"
+                  placeholder="Ex: São Paulo"
+                  error={touchedFields.city ? errors.city?.message : ""}
+                  required
+                  control={control}
+                  paddingTopLabel={20}
+                />
+                <FormInput
+                  label="CEP"
+                  name="cep"
+                  placeholder="00000-000"
+                  error={touchedFields.cep ? errors.cep?.message : ""}
+                  required
+                  control={control}
+                  paddingTopLabel={20}
+                  keyboardType="numeric"
+                />
+                <FormInput
+                  label="Bairro"
+                  name="neighborhood"
+                  placeholder="Digite seu bairro"
+                  error={
+                    touchedFields.neighborhood
+                      ? errors.neighborhood?.message
+                      : ""
+                  }
+                  required
+                  control={control}
+                  paddingTopLabel={20}
+                />
+                <FormInput
+                  label="Rua"
+                  name="street"
+                  placeholder="Digite sua rua"
+                  error={touchedFields.street ? errors.street?.message : ""}
+                  required
+                  control={control}
+                  paddingTopLabel={20}
+                />
+                <FormInput
+                  label="Número"
+                  name="number"
+                  placeholder="Digite o número"
+                  error={touchedFields.number ? errors.number?.message : ""}
+                  required
+                  control={control}
+                  paddingTopLabel={20}
+                  keyboardType="numeric"
+                />
+                <FormInput
+                  label="Complemento"
+                  name="complement"
+                  placeholder="Complemento (opcional)"
+                  error={
+                    touchedFields.complement ? errors.complement?.message : ""
+                  }
+                  control={control}
+                  paddingTopLabel={20}
+                />
 
-              <View style={styles.buttonsRow}>
+                {/* <View style={styles.buttonsRow}>
                 <TouchableOpacity onPress={onBack} style={styles.backButton}>
                   <Text style={styles.backButtonText}>Voltar</Text>
                 </TouchableOpacity>
@@ -597,9 +547,10 @@ export default function SignUpScreen() {
                 >
                   <Text style={styles.nextButtonText}>Criar conta</Text>
                 </TouchableOpacity>
+              </View> */}
               </View>
-            </View>
-          )}
+            </ProgressStep>
+          </ProgressSteps>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -608,40 +559,8 @@ export default function SignUpScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "white" },
-  scroll: { padding: 24, paddingBottom: 180, width: "100%" },
+  scroll: { paddingBottom: 100, width: "100%" },
   containerLogo: { alignItems: "center", width: "100%", marginBottom: 120 },
-  stepsIndicator: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 30,
-    alignItems: "center",
-  },
-  stepWrapper: { flexDirection: "row", alignItems: "center" },
-  stepNumber: {
-    color: "#A8B1D0",
-    fontWeight: "bold",
-    fontSize: 16,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "#A8B1D0",
-    textAlign: "center",
-    lineHeight: 20,
-  },
-  activeStepNumber: {
-    backgroundColor: "#25399E",
-    borderColor: "#25399E",
-    color: "white",
-  },
-  stepLabel: {
-    marginLeft: 5,
-    marginRight: 15,
-    fontSize: 12,
-    color: "#A8B1D0",
-  },
-  activeStepLabel: { color: "#25399E", fontWeight: "bold" },
-  stepLine: { width: 20, height: 1, backgroundColor: "#A8B1D0" },
   formContainer: {
     width: "85%",
     backgroundColor: "white",
@@ -649,7 +568,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     zIndex: 1,
   },
-
   title: {
     fontSize: 18,
     fontWeight: "bold",
@@ -663,24 +581,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: "center",
   },
-  checkboxContainer: { marginTop: 20 },
-  checkbox: { flexDirection: "row", alignItems: "center" },
-  checkboxLabel: { marginLeft: 8, fontSize: 12, color: "#4E4E4E" },
-  link: { color: "#546ADA", fontWeight: "bold" },
-  buttonsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 30,
-  },
-  backButton: {
-    borderColor: "#25399E",
-    borderWidth: 1.5,
-    padding: 12,
-    borderRadius: 8,
-    flex: 1,
-    marginRight: 8,
-  },
-  backButtonText: { color: "#25399E", fontWeight: "bold", textAlign: "center" },
   nextButton: {
     backgroundColor: "#25399E",
     padding: 12,
@@ -690,27 +590,6 @@ const styles = StyleSheet.create({
   },
   nextButtonText: { color: "white", fontWeight: "bold", textAlign: "center" },
   disabledButton: { backgroundColor: "#A8B1D0" },
-  inlineRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 10,
-  },
-  label: {
-    fontWeight: "bold",
-    marginTop: 15,
-    marginBottom: 6,
-    fontSize: 14,
-  },
-  picker: {
-    backgroundColor: "#f2f2f2",
-    borderRadius: 8,
-  },
-  errorText: {
-    color: "#B00020",
-    fontSize: 12,
-    marginTop: 4,
-    marginLeft: 4,
-  },
   instagramValidContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -734,11 +613,41 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
+    marginBottom: 10,
   },
 
   instagramValidateButtonText: {
     color: "white",
     fontWeight: "bold",
     fontSize: 12,
+  },
+  buttonsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 30,
+  },
+  label: {
+    fontWeight: "bold",
+    marginTop: 15,
+    marginBottom: 6,
+    fontSize: 14,
+  },
+  picker: {
+    backgroundColor: "#f2f2f2",
+    borderRadius: 8,
+  },
+  backButton: {
+    borderColor: "#25399E",
+    borderWidth: 1.5,
+    padding: 12,
+    borderRadius: 8,
+    flex: 1,
+    marginRight: 8,
+  },
+  backButtonText: { color: "#25399E", fontWeight: "bold", textAlign: "center" },
+  inlineRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
   },
 });

@@ -14,7 +14,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="(not-authenticated)/signup/page"
           options={{
-            headerShown: true,
+            headerShown: false,
             headerBackTitle: "Voltar",
             headerTitle: "Criar conta",
             headerTitleAlign: "center",
