@@ -7,6 +7,13 @@ export type LoginPayload  = {
   password: string;
 }
 
+export type Store = {
+  id: string;
+  name: string;
+  username?: string;
+  logo?: string;
+}
+
 export type signUpType =  {
   // Step 1
   name: string;
@@ -67,5 +74,42 @@ export type UserDataType = {
   message: string;
 };
 
+export interface Influencer {
+  id: string;
+  name: string;
+  profilePicture: string | null;
+  username: string;
+}
+
+export interface InfluencerState {
+  influencer: Influencer | null;
+  isLoading: boolean;
+  error: string | null;
+}
+
+export interface InfluencerStore {
+  store_id: string;
+  store: Store;
+  coupon_code?: string;
+  utm?: string;
+}
+
+export interface StoreState {
+  stores: InfluencerStore[];
+  selectedStore: Store | null;
+  isLoading: boolean;
+  error: string | null;
+}
+
+export interface UseStoreReturn extends StoreState {
+  couponCode: string | null;
+  utm: string | null;
+  setStores: (stores: InfluencerStore[]) => void;
+  selectStore: (store: Store | null) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+}
+
 export type TokenResetPasswordType = z.infer<typeof tokenResetPasswordSchema>;
 export type SignUpType = z.infer<typeof signupSchema>;
+
