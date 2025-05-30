@@ -35,7 +35,12 @@ export default function RootLayout() {
             headerStyle: { backgroundColor: "#ffffff" },
           }}
         />
-        <Stack.Screen name="(authenticated)/home/page" />
+        <Stack.Screen
+          name="(authenticated)/home/page"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </View>
   );
