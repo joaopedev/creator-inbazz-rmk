@@ -35,6 +35,10 @@ export default function SigninScreen() {
 
   const handleLogin = async (data: LoginPayload) => {
     await login(data.email, data.password);
+    if (error) {
+      console.error("Login error:", error);
+      alert("Erro ao fazer login. Verifique suas credenciais.");
+    }
   };
 
   return (
