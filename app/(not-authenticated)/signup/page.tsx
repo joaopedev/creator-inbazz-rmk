@@ -157,52 +157,6 @@ export default function SignUpScreen() {
     }
   };
 
-  const getStepFields = (stepNum: number): (keyof SignUpType)[] => {
-    if (stepNum === 1) {
-      return [
-        "name",
-        "lastName",
-        "cpf",
-        "username",
-        "email",
-        "confirmEmail",
-        "password",
-        "confirmPassword",
-        "instagram",
-        "tiktok",
-        "agreeTerms",
-      ];
-    } else if (stepNum === 2) {
-      return [
-        "phoneDDD",
-        "phoneNumber",
-        "birthDate",
-        "aboutYou",
-        "gender",
-        "isPregnant",
-      ];
-    } else if (stepNum === 3) {
-      return [
-        "state",
-        "city",
-        "cep",
-        "neighborhood",
-        "street",
-        "number",
-        "complement",
-      ];
-    }
-    return [];
-  };
-
-  const markStepFieldsTouched = () => {
-    const fields = getStepFields(step);
-    fields.forEach((field) => {
-      const currentValue = getValues(field);
-      setValue(field, currentValue, { shouldTouch: true });
-    });
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -233,7 +187,7 @@ export default function SignUpScreen() {
 
                 <FormInput
                   label="Nome"
-                  name="name"
+                  name={step === 1 ? "name" : ""}
                   placeholder="Digite seu nome"
                   error={touchedFields.name ? errors.name?.message : ""}
                   required
