@@ -1,8 +1,10 @@
 import axios from "axios";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL; // substitua pelo seu
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL; 
 const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   throw new Error(
     "SUPABASE_URL and SUPABASE_ANON_KEY must be defined in environment variables"
@@ -23,6 +25,7 @@ export function useSupabaseAuth() {
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<LoginResponse | null>(null);
   const API_AUTH_URL = `${SUPABASE_URL}/auth/v1/token?grant_type=password`;
+  const route = useRouter(); // Assuming you are using Next.js or a similar routing library
 
   const login = async (email: string, password: string) => {
     setLoading(true);
@@ -42,8 +45,7 @@ export function useSupabaseAuth() {
 
       setUser(response.data);
       console.log("Login successful:", response.data);
-
-      return response.data;
+      route.push("/(authenticated)/home/page");
     } catch (err: any) {
       console.error("Login error:", err.response?.data || err.message);
       setError(err.response?.data?.error_description || "Erro ao fazer login");
