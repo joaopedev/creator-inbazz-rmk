@@ -1,7 +1,3 @@
-import { FormInput } from "@/components/FormInput";
-import { signinSchema } from "@/schemas/index";
-import { useSupabaseAuth } from "@/store/loginStore";
-import { LoginPayload } from "@/types/index";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import React from "react";
@@ -15,6 +11,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { z } from "zod";
+import { FormInput } from "../../../components/FormInput";
+import { signinSchema } from "../../../schemas";
+import { useSupabaseAuth } from "../../../store/loginStore";
+import { LoginPayload } from "../../../types";
 
 export default function SigninScreen() {
   const { login, loading, error, user } = useSupabaseAuth();
@@ -30,11 +31,15 @@ export default function SigninScreen() {
       email: "",
       password: "",
     },
-    resolver: zodResolver(signinSchema),
+    resolver: zodResolver(signinSchema as z.ZodType<LoginPayload>),
   });
 
   const handleLogin = async (data: LoginPayload) => {
     await login(data.email, data.password);
+    if (error) {
+      console.error("Login error:", error);
+      alert("Erro ao fazer login. Verifique suas credenciais.");
+    }
   };
 
   return (
@@ -92,9 +97,7 @@ export default function SigninScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() =>
-            router.push("/(not-authenticated)/signup/page")
-          }
+          onPress={() => router.push("/(not-authenticated)/signup/page")}
         >
           <View style={{ flexDirection: "row", justifyContent: "center" }}>
             <Text style={styles.signinTextFirst}>Não tem uma conta?</Text>

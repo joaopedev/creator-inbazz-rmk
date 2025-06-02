@@ -51,3 +51,4 @@ export const signupSchema = z.object({
 });
 
 export type SignupType = z.infer<typeof signupSchema>;
+export default signupSchema;

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const SUPABASE_URL = 'https://pyleyiwcydiznmrilviu.supabase.co'; // substitua pelo seu
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5bGV5aXdjeWRpem5tcmlsdml1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc2NzkwOTAsImV4cCI6MjA1MzI1NTA5MH0.kticiXfXaBYbZ4gLTuw-7WWBmMxEWuPRKsJ6-PQu2zU';
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL; // substitua pelo seu
+const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
 export const api = axios.create({
   baseURL: `${SUPABASE_URL}/rest/v1`,

@@ -1,10 +1,8 @@
-import { PasswordEmail, ResetType } from "@/types/auth-data";
-import { TokenResetPasswordType } from "@/types/index";
-import { ForgotPasswordType } from "@/types/auth-data";
-import { Alert } from "react-native";
-import { ErrorResponse } from "@/interface/auth";
 import { AxiosError } from "axios";
-import { api } from "@/lib/api";
+import { Alert } from "react-native";
+import { ErrorResponse } from "../interface/auth";
+import { api } from "../lib/api";
+import { ForgotPasswordType, PasswordEmail, ResetType, TokenResetPasswordType } from "../types/auth-data";
 
 export const signInRequest = async (data: PasswordEmail) => {
   try {

@@ -1,11 +1,15 @@
-import axios from 'axios';
-import { useState } from 'react';
+import axios from "axios";
+import { useRouter } from "expo-router";
+import { useState } from "react";
 
-const SUPABASE_URL = 'https://pyleyiwcydiznmrilviu.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5bGV5aXdjeWRpem5tcmlsdml1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc2NzkwOTAsImV4cCI6MjA1MzI1NTA5MH0.kticiXfXaBYbZ4gLTuw-7WWBmMxEWuPRKsJ6-PQu2zU'; // substitua pelo seu
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL; 
+const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-const API_URL = `${SUPABASE_URL}/rest/v1/`
-
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  throw new Error(
+    "SUPABASE_URL and SUPABASE_ANON_KEY must be defined in environment variables"
+  );
+}
 interface LoginResponse {
   access_token: string;
   refresh_token: string;
@@ -20,6 +24,8 @@ export function useSupabaseAuth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<LoginResponse | null>(null);
+  const API_AUTH_URL = `${SUPABASE_URL}/auth/v1/token?grant_type=password`;
+  const route = useRouter(); // Assuming you are using Next.js or a similar routing library
 
   const login = async (email: string, password: string) => {
     setLoading(true);
@@ -27,23 +33,22 @@ export function useSupabaseAuth() {
 
     try {
       const response = await axios.post<LoginResponse>(
-        API_URL,
+        API_AUTH_URL,
         { email, password },
         {
           headers: {
             apikey: SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
 
       setUser(response.data);
-      console.log('Login successful:', response.data, user);
-      return response.data;
+      console.log("Login successful:", response.data);
+      route.push("/(authenticated)/home/page");
     } catch (err: any) {
-      console.error('Login error:', err.response?.data || err.message);
-      setError(err.response?.data?.error_description || 'Erro ao fazer login');
+      console.error("Login error:", err.response?.data || err.message);
+      setError(err.response?.data?.error_description || "Erro ao fazer login");
       return null;
     } finally {
       setLoading(false);

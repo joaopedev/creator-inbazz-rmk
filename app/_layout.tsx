@@ -14,13 +14,31 @@ export default function RootLayout() {
         <Stack.Screen
           name="(not-authenticated)/signup/page"
           options={{
-            headerShown: true,
+            headerShown: false,
             headerBackTitle: "Voltar",
             headerTitle: "Criar conta",
             headerTitleAlign: "center",
             headerTitleStyle: { fontSize: 20 },
             headerTintColor: "white",
             headerStyle: { backgroundColor: "#ffffff" },
+          }}
+        />
+        <Stack.Screen
+          name="(not-authenticated)/forgot-password/page"
+          options={{
+            headerShown: false,
+            headerBackTitle: "Voltar",
+            headerTitle: "Recuperar senha",
+            headerTitleAlign: "center",
+            headerTitleStyle: { fontSize: 20 },
+            headerTintColor: "white",
+            headerStyle: { backgroundColor: "#ffffff" },
+          }}
+        />
+        <Stack.Screen
+          name="(authenticated)/home/page"
+          options={{
+            headerShown: false,
           }}
         />
       </Stack>

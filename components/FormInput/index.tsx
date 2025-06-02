@@ -1,8 +1,9 @@
 // Atualize seu FormInput para aceitar um botão extra
-import { useFocusInput } from '@/hooks/useFocusInput';
+
 import { ReactNode } from 'react';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import { KeyboardTypeOptions, View } from 'react-native';
+import { useFocusInput } from '../../hooks/useFocusInput';
 import { Input } from '../Input';
 
 interface FormInputProps<T extends FieldValues> {

@@ -1,10 +1,18 @@
-import { signupSchema, tokenResetPasswordSchema } from "@/schemas/index";
 
 import { z } from "zod";
+import signupSchema from "../schemas/signup";
+import tokenResetPasswordSchema from "../schemas/token-reset-password";
 
 export type LoginPayload  = {
   email: string;
   password: string;
+}
+
+export type Store = {
+  id: string;
+  name: string;
+  username?: string;
+  logo?: string;
 }
 
 export type signUpType =  {
@@ -67,5 +75,42 @@ export type UserDataType = {
   message: string;
 };
 
+export interface Influencer {
+  id: string;
+  name: string;
+  profilePicture: string | null;
+  username: string;
+}
+
+export interface InfluencerState {
+  influencer: Influencer | null;
+  isLoading: boolean;
+  error: string | null;
+}
+
+export interface InfluencerStore {
+  store_id: string;
+  store: Store;
+  coupon_code?: string;
+  utm?: string;
+}
+
+export interface StoreState {
+  stores: InfluencerStore[];
+  selectedStore: Store | null;
+  isLoading: boolean;
+  error: string | null;
+}
+
+export interface UseStoreReturn extends StoreState {
+  couponCode: string | null;
+  utm: string | null;
+  setStores: (stores: InfluencerStore[]) => void;
+  selectStore: (store: Store | null) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+}
+
 export type TokenResetPasswordType = z.infer<typeof tokenResetPasswordSchema>;
 export type SignUpType = z.infer<typeof signupSchema>;
+
