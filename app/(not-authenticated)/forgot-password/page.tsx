@@ -1,6 +1,4 @@
-import { FormInput } from "@/components/FormInput";
-import { useAuth } from "@/hooks/useAuth";
-import { forgotPasswordSchema } from "@/schemas";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { router } from "expo-router";
@@ -15,6 +13,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { FormInput } from "../../../components/FormInput";
+import { useAuth } from "../../../hooks/useAuth";
+import { forgotPasswordSchema } from "../../../schemas";
 import { ForgotPasswordType } from "../../../types";
 
 export default function ForgotPassword() {

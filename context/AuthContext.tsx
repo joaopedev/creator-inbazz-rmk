@@ -1,18 +1,14 @@
-import { IAuthContext, IAuthProvider } from "@/interface/auth";
+import * as SecureStore from "expo-secure-store";
+import { createContext, useEffect, useState } from "react";
+import { Alert } from "react-native";
+import { IAuthContext, IAuthProvider } from "../interface/auth";
 import {
   forgotPasswordRequest,
   registerRequest,
   signInRequest,
-} from "@/services/auth";
-import {
-  ForgotPasswordType,
-  SignInType,
-  signUpType,
-  UserDataType
-} from "@/types/auth-data";
-import * as SecureStore from "expo-secure-store";
-import { createContext, useEffect, useState } from "react";
-import { Alert } from "react-native";
+} from "../services/auth";
+import { ForgotPasswordType, UserDataType } from "../types";
+import { SignInType, signUpType } from "../types/auth-data";
 
 export const AuthContext = createContext({} as IAuthContext);
 export const AuthProvider = ({ children }: IAuthProvider) => {
@@ -52,9 +48,19 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
     setUser(data);
   };
 
-  const onRegister = async ({ image, name, username, email, password, confirmPassword }: signUpType) => {
+  const onRegister = async ({
+    name,
+    username,
+    email,
+    password,
+    confirmPassword,
+  }: signUpType) => {
     const { data } = await registerRequest({
-      image, name, username, email, password, confirmPassword
+      name,
+      username,
+      email,
+      password,
+      confirmPassword,
     });
     const { message } = data;
     Alert.alert(message);
@@ -91,7 +97,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
         getToken,
         isAuthenticatedUser,
         loading,
-        setLoading
+        setLoading,
       }}
     >
       {children}

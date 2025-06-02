@@ -1,4 +1,4 @@
-import { SignUpType } from "@/types/auth-data";
+import { SignUpType } from "../types/auth-data";
 
 interface InfluencerPayload {
   name: string;

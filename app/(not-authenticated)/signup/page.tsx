@@ -1,7 +1,3 @@
-import { FormInput } from "@/components/FormInput";
-import { step1Schema, step2Schema, step3Schema } from "@/schemas/signup";
-import { signUp } from "@/store/singUpStore";
-import { SignUpType } from "@/types/auth-data";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -22,6 +18,10 @@ import {
 } from "react-native";
 import { ProgressStep, ProgressSteps } from "react-native-progress-steps";
 import { ZodType } from "zod";
+import { FormInput } from "../../../components/FormInput";
+import { step1Schema, step2Schema, step3Schema } from "../../../schemas/signup";
+import { signUp } from "../../../store/singUpStore";
+import { SignUpType } from "../../../types";
 
 export default function SignUpScreen() {
   const [step, setStep] = useState(1);

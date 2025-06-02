@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import {
-    FlatList,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  FlatList,
+  Image,
+  ImageBackground,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 const metricasData = [
@@ -54,14 +55,18 @@ const campanhasData = [
 export default function HomeScreen() {
   const [activeTab, setActiveTab] = useState("Em andamento");
 
-  const renderMetricCard = ({ item }: { item: typeof metricasData[0] }) => (
+  const renderMetricCard = ({ item }: { item: (typeof metricasData)[0] }) => (
     <View style={styles.metricCard}>
       <Text style={styles.metricTitle}>{item.titulo}</Text>
       <Text style={styles.metricNumber}>{item.valor}</Text>
     </View>
   );
 
-  const renderCampaignCard = ({ item }: { item: typeof campanhasData[0] }) => (
+  const renderCampaignCard = ({
+    item,
+  }: {
+    item: (typeof campanhasData)[0];
+  }) => (
     <View style={styles.campaignCard}>
       <Text style={styles.campaignTitle}>{item.nome}</Text>
       <View style={styles.campaignMetrics}>
@@ -99,8 +104,15 @@ export default function HomeScreen() {
         />
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 20 }}>
-        <View style={styles.banner}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ marginTop: 20 }}
+      >
+        <ImageBackground
+          source={require("../../../assets/images/5f3fb6d24e3e62686b224bdbc90790935d7549ff.png")}
+          style={styles.banner}
+          imageStyle={{ borderRadius: 10 }}
+        >
           <Text style={styles.bannerTitle}>Primeiros passos</Text>
           <Text style={styles.bannerSubtitle}>
             Descubra todas as funcionalidades do app
@@ -108,7 +120,7 @@ export default function HomeScreen() {
           <TouchableOpacity style={styles.bannerButton}>
             <Text style={styles.bannerButtonText}>→</Text>
           </TouchableOpacity>
-        </View>
+        </ImageBackground>
         <Text style={styles.sectionTitle}>Métricas</Text>
         <FlatList
           data={metricasData}
@@ -179,11 +191,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   banner: {
-    backgroundImage: require("../../../assets/images/5f3fb6d24e3e62686b224bdbc90790935d7549ff.png"),
     borderRadius: 10,
     padding: 20,
     marginBottom: 25,
     position: "relative",
+    overflow: "hidden", // Garante que o conteúdo respeite o borderRadius
   },
   bannerTitle: {
     color: "#fff",
