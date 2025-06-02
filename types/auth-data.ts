@@ -1,6 +1,7 @@
-import { signupSchema, tokenResetPasswordSchema } from "@/schemas/index";
 
 import { z } from "zod";
+import signupSchema from "../schemas/signup";
+import tokenResetPasswordSchema from "../schemas/token-reset-password";
 
 export type LoginPayload  = {
   email: string;
