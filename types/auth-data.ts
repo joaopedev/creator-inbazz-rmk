@@ -35,7 +35,6 @@ export type signUpType =  {
   birthDate: string;
   gender: "Feminino" | "Masculino" | "Não binário" | "Outro" | "Prefiro não dizer";
   aboutYou: string;
-  isPregnant: "Sim" | "Não" | "";
 
   // Step 3
   state: string;
