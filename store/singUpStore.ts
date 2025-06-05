@@ -1,4 +1,5 @@
-import { SignUpType } from "../types/auth-data";
+import { create } from "zustand";
+import { SignUpStore, SignUpType } from "../types/auth-data";
 
 interface InfluencerPayload {
   name: string;
@@ -25,16 +26,16 @@ interface InfluencerPayload {
   address_complement?: string;
 }
 
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL; 
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || "";
 
 export async function signUp(data: SignUpType) {
   try {
     // 1. Criar o usuário no Supabase Auth
     const signUpResponse = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         apikey: SUPABASE_ANON_KEY,
         Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
       },
@@ -47,7 +48,7 @@ export async function signUp(data: SignUpType) {
     const signUpData = await signUpResponse.json();
 
     if (!signUpResponse.ok) {
-      throw new Error(signUpData.error?.message || 'Erro ao criar usuário');
+      throw new Error(signUpData.error?.message || "Erro ao criar usuário");
     }
 
     // 2. Se usuário criado, salvar dados extras na tabela influencers
@@ -77,25 +78,31 @@ export async function signUp(data: SignUpType) {
     };
 
     const insertResponse = await fetch(`${SUPABASE_URL}/rest/v1/influencers`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         apikey: SUPABASE_ANON_KEY as string,
         Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        Prefer: 'return=representation',
+        Prefer: "return=representation",
       },
       body: JSON.stringify(payload),
     });
 
     if (!insertResponse.ok) {
       const insertError = await insertResponse.json();
-      throw new Error(insertError.message || 'Erro ao salvar dados do influencer');
+      throw new Error(
+        insertError.message || "Erro ao salvar dados do influencer"
+      );
     }
 
     return await insertResponse.json();
-
   } catch (error: any) {
-    console.error('Erro ao criar conta:', error.message);
-    throw new Error(error.message || 'Erro inesperado ao criar conta.');
+    console.error("Erro ao criar conta:", error.message);
+    throw new Error(error.message || "Erro inesperado ao criar conta.");
   }
 }
+
+export const useSignUpStore = create<SignUpStore>((set) => ({
+  step1: null,
+  setStep1: (data) => set({ step1: data }),
+}));

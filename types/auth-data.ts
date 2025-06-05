@@ -1,21 +1,21 @@
-
 import { z } from "zod";
 import signupSchema from "../schemas/signup";
+import { Step1Data } from "../schemas/step1Schema";
 import tokenResetPasswordSchema from "../schemas/token-reset-password";
 
-export type LoginPayload  = {
+export type LoginPayload = {
   email: string;
   password: string;
-}
+};
 
 export type Store = {
   id: string;
   name: string;
   username?: string;
   logo?: string;
-}
+};
 
-export type signUpType =  {
+export type signUpType = {
   // Step 1
   name: string;
   username: string;
@@ -33,8 +33,14 @@ export type signUpType =  {
   phoneDDD: string;
   phoneNumber: string;
   birthDate: string;
-  gender: "Feminino" | "Masculino" | "Não binário" | "Outro" | "Prefiro não dizer";
+  gender:
+    | "Feminino"
+    | "Masculino"
+    | "Não binário"
+    | "Outro"
+    | "Prefiro não dizer";
   aboutYou: string;
+  isPregnant: "Sim" | "Não" | "";
 
   // Step 3
   state: string;
@@ -113,3 +119,7 @@ export interface UseStoreReturn extends StoreState {
 export type TokenResetPasswordType = z.infer<typeof tokenResetPasswordSchema>;
 export type SignUpType = z.infer<typeof signupSchema>;
 
+export type SignUpStore = {
+  step1: Step1Data | null;
+  setStep1: (data: Step1Data) => void;
+};
