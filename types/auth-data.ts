@@ -1,6 +1,8 @@
 import { z } from "zod";
 import signupSchema from "../schemas/signup";
 import { Step1Data } from "../schemas/step1Schema";
+import { Step2Data } from "../schemas/step2Schema";
+import { Step3Data } from "../schemas/step3Schema";
 import tokenResetPasswordSchema from "../schemas/token-reset-password";
 
 export type LoginPayload = {
@@ -121,5 +123,9 @@ export type SignUpType = z.infer<typeof signupSchema>;
 
 export type SignUpStore = {
   step1: Step1Data | null;
+  step2: Step2Data | null;
+  step3: Step3Data | null;
   setStep1: (data: Step1Data) => void;
+  setStep2: (data: Step2Data) => void;
+  setStep3: (data: Step3Data) => void;
 };
