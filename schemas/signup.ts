@@ -31,7 +31,7 @@ export const step2Schema = z.object({
   birthDate: z.string(),
   gender: z.enum(["Feminino", "Masculino", "Não binário", "Outro", "Prefiro não dizer"]),
   aboutYou: z.string(),
-  isPregnant: z.enum(["Sim", "Não", ""]),
+  haveAgent: z.enum(["Sim", "Não", ""]),
 });
 
 export const step3Schema = z.object({
