@@ -15,7 +15,7 @@ interface InfluencerPayload {
   gender: string;
   description: string;
   additional_info: {
-    isPregnant: string;
+    haveAgent: string;
   };
   address_state: string;
   address_city: string;
@@ -50,8 +50,6 @@ export async function signUp(data: SignUpType) {
     if (!signUpResponse.ok) {
       throw new Error(signUpData.error?.message || "Erro ao criar usuário");
     }
-
-    // 2. Se usuário criado, salvar dados extras na tabela influencers
     const payload: InfluencerPayload = {
       name: data.step1.name,
       last_name: data.step1.lastName,
@@ -66,7 +64,7 @@ export async function signUp(data: SignUpType) {
       gender: data.step2.gender,
       description: data.step2.aboutYou,
       additional_info: {
-        isPregnant: data.step2.isPregnant,
+        haveAgent: data.step2.haveAgent,
       },
       address_state: data.step3.state,
       address_city: data.step3.city,
@@ -104,5 +102,9 @@ export async function signUp(data: SignUpType) {
 
 export const useSignUpStore = create<SignUpStore>((set) => ({
   step1: null,
+  step2: null,
+  step3: null,
   setStep1: (data) => set({ step1: data }),
+  setStep2: (data) => set({ step2: data }),
+  setStep3: (data) => set({ step3: data })
 }));
