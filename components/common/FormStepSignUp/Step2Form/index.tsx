@@ -2,14 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { step2Schema } from "../../../../schemas/signup";
-
-import { Step2Data } from "../../../../schemas/step2Schema";
+import { Step2Data, step2Schema } from "../../../../schemas/step2Schema";
 import { useSignUpStore } from "../../../../store/singUpStore";
 import { FormInput } from "../../../FormInput";
 
 interface Step2Props {
-  onNext: () => void;
+  onNext: (data: Step2Data) => void;
   onBack: () => void;
 }
 
@@ -28,11 +26,6 @@ export const Step2Form = ({ onNext }: Step2Props) => {
   });
   const { setStep2 } = useSignUpStore();
 
-  const onSubmit = (data: Step2Data) => {
-    setStep2(data);
-    onNext();
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Agora, alguns dados pessoais</Text>
@@ -40,9 +33,9 @@ export const Step2Form = ({ onNext }: Step2Props) => {
       <FormInput label="DDD" name="phoneDDD" placeholder="Insira seu nome" control={control} error={errors.phoneDDD?.message} required />
       <FormInput label="Telefone" name="phoneNumber" placeholder="Insira seu sobrenome" control={control} error={errors.phoneNumber?.message} required />
       <FormInput label="Data de nascimento" name="birthDate" placeholder="Insira seu CPF" control={control} error={errors.birthDate?.message} required keyboardType="numeric" />
-      <FormInput label="Gênero" name="gender" placeholder="Insira seu email" control={control} error={errors.gender?.message} required />
-      <FormInput label="Sobre você" name="aboutYou" placeholder="Confirme seu email" control={control} error={errors.aboutYou?.message} required />
-      <FormInput label="É agenciado?" name="haveAgent" placeholder="Confirme seu email" control={control} error={errors.aboutYou?.message} required />
+      <FormInput label="Gênero" name="gender" placeholder="Defina seu genero" control={control} error={errors.gender?.message} required />
+      <FormInput label="Sobre você" name="aboutYou" placeholder="Fale sobre você" control={control} error={errors.aboutYou?.message} required />
+      <FormInput label="É agenciado?" name="haveAgent" placeholder="Sim?" control={control} error={errors.aboutYou?.message} required />
       {/* <FormInput
         label="Crie sua senha"
         name="password"
@@ -98,7 +91,7 @@ export const Step2Form = ({ onNext }: Step2Props) => {
       <TouchableOpacity
         style={[styles.submitButton, !isValid && styles.disabledButton]}
         disabled={!isValid}
-        onPress={handleSubmit(onSubmit)}
+        onPress={handleSubmit(onNext)}
       >
         <Text style={styles.submitText}>Avançar</Text>
       </TouchableOpacity>

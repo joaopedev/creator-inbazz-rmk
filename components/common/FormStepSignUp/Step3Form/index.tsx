@@ -2,13 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { step3Schema } from "../../../../schemas/signup";
-import { Step3Data } from "../../../../schemas/step3Schema";
+import { Step3Data, step3Schema } from "../../../../schemas/step3Schema";
 import { useSignUpStore } from "../../../../store/singUpStore";
 import { FormInput } from "../../../FormInput";
 
 interface Step3Props {
-  onSignUp: () => void;
+  onSignUp: (data: Step3Data) => void;
   onBack?: () => void;
 }
 
@@ -33,10 +32,6 @@ export const Step3Form = ({ onSignUp }: Step3Props) => {
     },
   });
   const { setStep3 } = useSignUpStore();
-  const onSubmit = (data: Step3Data) => {
-    setStep3(data);
-    onSignUp();
-  };
 
   return (
     <View style={styles.container}>
@@ -115,9 +110,9 @@ export const Step3Form = ({ onSignUp }: Step3Props) => {
       <TouchableOpacity
         style={[styles.submitButton, !isValid && styles.disabledButton]}
         disabled={!isValid}
-        onPress={handleSubmit(onSubmit)}
+        onPress={handleSubmit(onSignUp)}
       >
-        <Text style={styles.submitText}>Avançar</Text>
+        <Text style={styles.submitText}>Criar Conta</Text>
       </TouchableOpacity>
 
       <TouchableOpacity

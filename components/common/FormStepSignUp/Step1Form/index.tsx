@@ -4,14 +4,12 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { step1Schema } from "../../../../schemas/signup";
-import { Step1Data } from "../../../../schemas/step1Schema";
-import { useSignUpStore } from "../../../../store/singUpStore";
+import { Step1Data, step1Schema } from "../../../../schemas/step1Schema";
 import { FormInput } from "../../../FormInput";
 import Spinner from "../../Spinner";
 
 interface Step1Props {
-  onNext: () => void;
+  onNext: (data: Step1Data) => void;
 }
 
 export const Step1Form = ({ onNext }: Step1Props) => {
@@ -36,21 +34,16 @@ export const Step1Form = ({ onNext }: Step1Props) => {
       agreeTerms: false,
     },
   });
+  console.log(errors, isValid)
   const instagramUsername = useWatch({ control, name: "instagram" });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { setStep1 } = useSignUpStore();
   const [isInstagramValid, setIsInstagramValid] = useState(false);
   const [instagramData, setInstagramData] = useState<{
     avatar: string;
     username: string;
   } | null>(null);
   const [loadingInstagram, setLoadingInstagram] = useState(false);
-
-  const onSubmit = (data: Step1Data) => {
-    setStep1(data);
-    onNext();
-  };
 
   const validateInstagram = async () => {
     if (!instagramUsername) return;
@@ -248,7 +241,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
       <TouchableOpacity
         style={[styles.submitButton, !isValid && styles.disabledButton]}
         disabled={!isValid}
-        onPress={handleSubmit(onSubmit)}
+        onPress={handleSubmit(onNext)}
       >
         <Text style={styles.submitText}>Avançar</Text>
       </TouchableOpacity>

@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   Image,
@@ -12,11 +13,34 @@ import { StepIndicator } from "../../../components/StepIndicator";
 import { Step1Form } from "../../../components/common/FormStepSignUp/Step1Form";
 import { Step2Form } from "../../../components/common/FormStepSignUp/Step2Form";
 import { Step3Form } from "../../../components/common/FormStepSignUp/Step3Form";
+import { signUpToBackend } from "../../../store/singUpStore";
 
 export default function SignUpScreen() {
   const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({} as any);
+  const router = useRouter();
 
-  const goToNext = () => setStep((prev) => prev + 1);
+  const nextStep = (data: any) => {
+    const stepKey = `step${step}`;
+    setFormData({ ...formData, [stepKey]: data });
+    setStep(step + 1);
+  };
+
+  const finish = async (data: any) => {
+    const finalData = {
+      step1: formData.step1,
+      step2: formData.step2,
+      step3: data,
+    };
+
+    try {
+      await signUpToBackend(finalData);
+      router.push("/(authenticated)/home/page");
+    } catch (err) {
+      console.log("Erro ao criar conta:", err);
+    }
+  };
+
   const goToBack = () => setStep((prev) => prev - 1);
 
   return (
@@ -35,9 +59,9 @@ export default function SignUpScreen() {
           </View>
 
           <StepIndicator step={step} />
-          {step === 1 && <Step1Form onNext={goToNext} />}
-          {step === 2 && <Step2Form onNext={goToNext} onBack={goToBack} />}
-          {step === 3 && <Step3Form onSignUp={goToBack} />}
+          {step === 1 && <Step1Form onNext={nextStep} />}
+          {step === 2 && <Step2Form onNext={nextStep} onBack={goToBack} />}
+          {step === 3 && <Step3Form onSignUp={finish} onBack={goToBack} />}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
