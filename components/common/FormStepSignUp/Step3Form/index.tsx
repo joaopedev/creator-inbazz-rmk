@@ -16,7 +16,6 @@ export const Step3Form = ({ onSignUp }: Step3Props) => {
     control,
     handleSubmit,
     formState: { errors, isValid },
-    watch,
   } = useForm<Step3Data>({
     mode: "onChange",
     resolver: zodResolver(step3Schema),
@@ -38,6 +37,7 @@ export const Step3Form = ({ onSignUp }: Step3Props) => {
       <Text style={styles.title}>Endereço</Text>
 
       <FormInput
+        paddingTopLabel={20}
         label="País"
         name="country"
         placeholder="Escolha uma opção"
@@ -46,6 +46,7 @@ export const Step3Form = ({ onSignUp }: Step3Props) => {
         required
       />
       <FormInput
+        paddingTopLabel={20}
         label="Estado"
         name="state"
         placeholder="Escolha uma opção"
@@ -54,6 +55,7 @@ export const Step3Form = ({ onSignUp }: Step3Props) => {
         required
       />
       <FormInput
+        paddingTopLabel={20}
         label="CEP"
         name="cep"
         placeholder="00000-00"
@@ -63,13 +65,16 @@ export const Step3Form = ({ onSignUp }: Step3Props) => {
         keyboardType="numeric"
       />
       <FormInput
+        paddingTopLabel={20}
         label="Cidade"
+        placeholder="Vitória"
         name="city"
         control={control}
         error={errors.number?.message}
         required
       />
       <FormInput
+        paddingTopLabel={20}
         label="Bairro"
         name="neighborhood"
         control={control}
@@ -77,6 +82,7 @@ export const Step3Form = ({ onSignUp }: Step3Props) => {
         required
       />
       <FormInput
+        paddingTopLabel={20}
         label="Número"
         name="number"
         placeholder="Insira o nº residencial"
@@ -85,27 +91,13 @@ export const Step3Form = ({ onSignUp }: Step3Props) => {
         required
       />
       <FormInput
+        paddingTopLabel={20}
         label="Complemento"
         name="complement"
         control={control}
         error={errors.complement?.message}
         required
       />
-
-      {/* <FormInput label="Tiktok" name="tiktok" placeholder="Insira seu tiktok" control={control} error={errors.tiktok?.message} />
-
-      <Controller
-        name="agreeTerms"
-        control={control}
-        rules={{ required: true }}
-        render={({ field: { value, onChange } }) => (
-          <TouchableOpacity style={styles.checkboxRow} onPress={() => onChange(!value)}>
-            <Ionicons name={value ? "checkbox" : "square-outline"} size={20} color="#25399E" />
-            <Text style={styles.checkboxText}>Declaro que li e concordo com os <Text style={styles.link}>Termos de Uso</Text></Text>
-          </TouchableOpacity>
-        )}
-      />
-      {errors.agreeTerms && <Text style={styles.error}>{errors.agreeTerms.message}</Text>} */}
 
       <TouchableOpacity
         style={[styles.submitButton, !isValid && styles.disabledButton]}
@@ -121,12 +113,6 @@ export const Step3Form = ({ onSignUp }: Step3Props) => {
       >
         <Text style={styles.backButtonText}>Voltar</Text>
       </TouchableOpacity>
-
-      {/* <TouchableOpacity style={styles.loginRow} onPress={() => router.push("/(not-authenticated)/signin/page")}>
-        <Text style={styles.loginText}>
-          Já tem uma conta? <Text style={styles.link}>Acesse</Text>
-        </Text>
-      </TouchableOpacity> */}
     </View>
   );
 };
@@ -138,6 +124,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "left",
     marginBottom: 10,
+    marginLeft: 3,
   },
   subtitle: {
     fontSize: 14,
