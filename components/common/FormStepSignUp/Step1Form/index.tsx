@@ -1,10 +1,11 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Step1Data, step1Schema } from "../../../../schemas/step1Schema";
+import { api } from "../../../../store/singUpStore";
 import { FormInput } from "../../../FormInput";
 import Spinner from "../../Spinner";
 
@@ -17,7 +18,9 @@ export const Step1Form = ({ onNext }: Step1Props) => {
     control,
     handleSubmit,
     formState: { errors, isValid },
-    watch,
+    setError,
+    clearErrors,
+    setValue
   } = useForm<Step1Data>({
     mode: "onChange",
     resolver: zodResolver(step1Schema),
@@ -34,10 +37,14 @@ export const Step1Form = ({ onNext }: Step1Props) => {
       agreeTerms: false,
     },
   });
-  console.log(errors, isValid)
-  const instagramUsername = useWatch({ control, name: "instagram" });
+
+  const emailValue = useWatch({ control, name: "email" });
+  const cpfValue = useWatch({ control, name: "cpf" });
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [isCheckingCpf, setIsCheckingCpf] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const instagramUsername = useWatch({ control, name: "instagram" });
   const [isInstagramValid, setIsInstagramValid] = useState(false);
   const [instagramData, setInstagramData] = useState<{
     avatar: string;
@@ -45,23 +52,35 @@ export const Step1Form = ({ onNext }: Step1Props) => {
   } | null>(null);
   const [loadingInstagram, setLoadingInstagram] = useState(false);
 
+  const formatCpf = (input: string) => {
+    let formatted = input.replace(/\D/g, '');
+    if (formatted.length > 3 && formatted.length <= 6) {
+      formatted = formatted.replace(/(\d{3})(\d{1,})/, '$1.$2');
+    } else if (formatted.length > 6 && formatted.length <= 9) {
+      formatted = formatted.replace(/(\d{3})(\d{3})(\d{1,})/, '$1.$2.$3');
+    }
+    return formatted;
+  };
+
+  const handleChangeCpf = (text: string) => {
+    const formatted = formatCpf(text);
+    setValue("cpf", formatted);
+  };
+
   const validateInstagram = async () => {
     if (!instagramUsername) return;
     setLoadingInstagram(true);
-
     try {
       const formData = new FormData();
       formData.append("user", instagramUsername);
 
-      const response = await fetch(process.env.EXPO_PUBLIC_INSTAGRAM_VALIDATE, {
-        method: "POST",
-        body: formData,
-      });
-
+      const response = await fetch(
+        process.env.EXPO_PUBLIC_INSTAGRAM_VALIDATE!,
+        { method: "POST", body: formData }
+      );
       if (!response.ok) throw new Error("Erro na resposta da API");
 
       const data = await response.json();
-
       if (data && data.pfp_url && data.userdoIG) {
         setInstagramData({
           avatar: data.pfp_url,
@@ -80,6 +99,73 @@ export const Step1Form = ({ onNext }: Step1Props) => {
       setLoadingInstagram(false);
     }
   };
+
+  // useEffect de verificação do CPF
+  useEffect(() => {
+    const rawCpfDigits = cpfValue.replace(/\D/g, "");
+    if (rawCpfDigits.length < 11) {
+      clearErrors("cpf");
+      return;
+    }
+
+    setIsCheckingCpf(true);
+    api
+      .get(`/supabase/cpf/${rawCpfDigits}`)
+      .then((response) => {
+        const data = response.data;
+        if (Array.isArray(data) && data.length > 0) {
+          setError("cpf", {
+            type: "manual",
+            message: "CPF já cadastrado",
+          });
+        } else {
+          clearErrors("cpf");
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao verificar CPF no backend:", err);
+        setError("cpf", {
+          type: "manual",
+          message: "Erro ao verificar CPF. Tente novamente.",
+        });
+      })
+      .finally(() => {
+        setIsCheckingCpf(false);
+      });
+  }, [cpfValue, setError, clearErrors]);
+
+  // useEffect de verificação de E‐mail
+  useEffect(() => {
+    if (!emailValue || !emailValue.includes("@")) {
+      clearErrors("email");
+      return;
+    }
+
+    setIsCheckingEmail(true);
+    api
+      .get(`/supabase/email/${emailValue}`)
+      .then((response) => {
+        const data = response.data;
+        if (Array.isArray(data) && data.length > 0) {
+          setError("email", {
+            type: "manual",
+            message: "E-mail já cadastrado",
+          });
+        } else {
+          clearErrors("email");
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao verificar e-mail no backend:", err);
+        setError("email", {
+          type: "manual",
+          message: "Erro ao verificar e-mail. Tente novamente.",
+        });
+      })
+      .finally(() => {
+        setIsCheckingEmail(false);
+      });
+  }, [emailValue, setError, clearErrors]);
 
   return (
     <View style={styles.container}>
@@ -108,35 +194,43 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         paddingTopLabel={20}
         label="CPF"
         name="cpf"
-        placeholder="Insira seu CPF"
+        placeholder="00000000000"
         control={control}
         error={errors.cpf?.message}
         required
         keyboardType="numeric"
       />
+      {isCheckingCpf && (
+        <Text style={styles.info}>Verificando CPF no servidor...</Text>
+      )}
       <FormInput
         paddingTopLabel={20}
-        label="Email"
+        label="E-mail"
         name="email"
-        placeholder="Insira seu email"
+        placeholder="exemplo@dominio.com"
         control={control}
         error={errors.email?.message}
         required
+        keyboardType="email-address"
       />
+      {isCheckingEmail && (
+        <Text style={styles.info}>Verificando e-mail no servidor...</Text>
+      )}
       <FormInput
         paddingTopLabel={20}
-        label="Confirme seu email"
+        label="Confirme seu e-mail"
         name="confirmEmail"
-        placeholder="Confirme seu email"
+        placeholder="Repita seu e-mail"
         control={control}
         error={errors.confirmEmail?.message}
         required
+        keyboardType="email-address"
       />
       <FormInput
         paddingTopLabel={20}
         label="Crie sua senha"
         name="password"
-        placeholder="Sua senha deve ter, no mínimo, 6 caracteres"
+        placeholder="Pelo menos 6 caracteres"
         control={control}
         secureTextEntry={!showPassword}
         error={errors.password?.message}
@@ -153,7 +247,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         paddingTopLabel={20}
         label="Confirme sua senha"
         name="confirmPassword"
-        placeholder="Confirme sua senha"
+        placeholder="Repita sua senha"
         control={control}
         secureTextEntry={!showConfirmPassword}
         error={errors.confirmPassword?.message}
@@ -172,7 +266,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
             paddingTopLabel={20}
             label="Instagram"
             name="instagram"
-            placeholder="Insira seu instagram"
+            placeholder="Seu usuário (ex: fulano)"
             control={control}
             error={errors.instagram?.message}
             required
@@ -209,7 +303,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         paddingTopLabel={20}
         label="Tiktok"
         name="tiktok"
-        placeholder="Insira seu tiktok"
+        placeholder="Seu usuário (ex: @fulano)"
         control={control}
         error={errors.tiktok?.message}
       />
@@ -236,7 +330,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         )}
       />
       {errors.agreeTerms && (
-        <Text style={styles.error}>{errors.agreeTerms.message}</Text>
+        <Text style={styles.error}>{errors.agreeTerms?.message}</Text>
       )}
       <TouchableOpacity
         style={[styles.submitButton, !isValid && styles.disabledButton]}
@@ -284,23 +378,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
   },
-  instagramValidContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  instagramAvatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-  },
-  instagramUsername: {
-    fontSize: 12,
-    color: "#000",
-  },
   checkboxText: { marginLeft: 10, fontSize: 14 },
   link: { color: "#25399E", textDecorationLine: "underline" },
   error: { color: "red", fontSize: 12, marginTop: -8, marginBottom: 8 },
+  info: { color: "#666", fontSize: 12, marginTop: 4, marginBottom: 4 },
   submitButton: {
     backgroundColor: "#25399E",
     paddingVertical: 14,
@@ -309,10 +390,6 @@ const styles = StyleSheet.create({
   },
   submitText: { color: "white", textAlign: "center", fontWeight: "bold" },
   disabledButton: { backgroundColor: "#A8B1D0" },
-  validateButtonText: {
-    color: "white",
-    fontWeight: "bold",
-  },
   backButton: {
     marginTop: 16,
     borderWidth: 1,
@@ -342,6 +419,20 @@ const styles = StyleSheet.create({
   instagramInputContainer: {
     flexBasis: "65%",
   },
+  instagramValidContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  instagramAvatar: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+  },
+  instagramUsername: {
+    fontSize: 12,
+    color: "#000",
+  },
   validateButton: {
     flexBasis: "30%",
     backgroundColor: "#25399E",
@@ -349,5 +440,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: 48,
+  },
+  validateButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
