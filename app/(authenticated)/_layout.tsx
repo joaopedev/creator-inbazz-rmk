@@ -27,7 +27,7 @@ export default function TabsLayout() {
         options={{
           title: "Home",
           tabBarLabel: "Home",
-          tabBarIcon: ({ color, focused, size }) => (
+          tabBarIcon: ({ focused }) => (
             <TabBarImageIcon
               focused={focused}
               activeIcon={require("../../assets/images/homeActive.png")}
@@ -42,7 +42,7 @@ export default function TabsLayout() {
           title: "Posts",
           tabBarLabel: "Posts",
           headerShown: false,
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ focused }) => (
             <TabBarImageIcon
               focused={focused}
               activeIcon={require("../../assets/images/postsActive.png")}
@@ -76,7 +76,7 @@ export default function TabsLayout() {
           headerTitleStyle: { fontSize: 20 },
           headerTintColor: "white",
           headerStyle: { backgroundColor: "#4AACB3" },
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ focused }) => (
             <TabBarImageIcon
               focused={focused}
               activeIcon={require("../../assets/images/walletActive.png")}

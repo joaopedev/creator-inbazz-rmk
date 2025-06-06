@@ -36,6 +36,7 @@ export default function SignUpScreen() {
     try {
       await signUpToBackend(finalData);
       router.push("/(authenticated)/home/page");
+      console.log("Usario criado:", finalData)
     } catch (err) {
       console.log("Erro ao criar conta:", err);
     }
