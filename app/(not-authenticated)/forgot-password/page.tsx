@@ -1,54 +1,47 @@
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosError } from "axios";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
 import {
-  ActivityIndicator,
   Image,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-import { FormInput } from "../../../components/FormInput";
-import { useAuth } from "../../../hooks/useAuth";
-import { forgotPasswordSchema } from "../../../schemas";
-import { ForgotPasswordType } from "../../../types";
+
 
 export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
-  const { forgotPassword } = useAuth();
+  // const { forgotPassword } = useAuth();
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<ForgotPasswordType>({
-    mode: "onChange",
-    defaultValues: {
-      email: "",
-    },
-    resolver: zodResolver(forgotPasswordSchema),
-  });
+  // const {
+  //   control,
+  //   handleSubmit,
+  //   formState: { errors },
+  //   reset,
+  // } = useForm<ForgotPasswordType>({
+  //   mode: "onChange",
+  //   defaultValues: {
+  //     email: "",
+  //   },
+  //   resolver: zodResolver(forgotPasswordSchema),
+  // });
 
-  const onSubmit = async (data: ForgotPasswordType) => {
-    try {
-      setLoading(true);
-      await forgotPassword(data);
-      setLoading(false);
-      router.push("/(not-authenticated)/signin/page");
-      reset();
-    } catch (error) {
-      console.log("error", error);
-      setLoading(false);
-      const err = error as AxiosError;
-      return err;
-    }
-  };
+  // const onSubmit = async (data: ForgotPasswordType) => {
+  //   try {
+  //     setLoading(true);
+  //     await forgotPassword(data);
+  //     setLoading(false);
+  //     router.push("/(not-authenticated)/signin/page");
+  //     reset();
+  //   } catch (error) {
+  //     console.log("error", error);
+  //     setLoading(false);
+  //     const err = error as AxiosError;
+  //     return err;
+  //   }
+  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -65,7 +58,7 @@ export default function ForgotPassword() {
           Insira seu email e vamos te enviar um link para redefinir sua senha
         </Text>
 
-        <FormInput
+        {/* <FormInput
           label="Email"
           name="email"
           placeholder="Insira seu email"
@@ -81,7 +74,7 @@ export default function ForgotPassword() {
           <Text style={styles.loginButtonText}>
             {loading ? <ActivityIndicator color="white" /> : "Enviar link"}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity
           style={styles.signupButtonReturn}
