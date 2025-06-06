@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { SignUpStore } from "../types/auth-data";
 
 export const api = axios.create({
-  baseURL: "http://192.168.18.41:3000",
+  baseURL: "http://192.168.15.2:3000",
 });
 
 export async function signUpToBackend(data: any) {
