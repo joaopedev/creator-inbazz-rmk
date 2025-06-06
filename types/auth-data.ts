@@ -1,5 +1,4 @@
 import { z } from "zod";
-import signupSchema from "../schemas/signup";
 import { Step1Data } from "../schemas/step1Schema";
 import { Step2Data } from "../schemas/step2Schema";
 import { Step3Data } from "../schemas/step3Schema";
@@ -17,42 +16,42 @@ export type Store = {
   logo?: string;
 };
 
-export type signUpType = {
-  // Step 1
-  name: string;
-  username: string;
-  email: string;
-  confirmEmail: string;
-  password: string;
-  confirmPassword: string;
-  instagram: string;
-  tiktok?: string;
-  agreeTerms: boolean;
-  cpf: string;
-  lastName: string;
+// export type signUpType = {
+//   // Step 1
+//   name: string;
+//   username: string;
+//   email: string;
+//   confirmEmail: string;
+//   password: string;
+//   confirmPassword: string;
+//   instagram: string;
+//   tiktok?: string;
+//   agreeTerms: boolean;
+//   cpf: string;
+//   lastName: string;
 
-  // Step 2
-  phoneDDD: string;
-  phoneNumber: string;
-  birthDate: string;
-  gender:
-    | "Feminino"
-    | "Masculino"
-    | "Não binário"
-    | "Outro"
-    | "Prefiro não dizer";
-  aboutYou: string;
-  isPregnant: "Sim" | "Não" | "";
+//   // Step 2
+//   phoneDDD: string;
+//   phoneNumber: string;
+//   birthDate: string;
+//   gender:
+//     | "Feminino"
+//     | "Masculino"
+//     | "Não binário"
+//     | "Outro"
+//     | "Prefiro não dizer";
+//   aboutYou: string;
+//   isPregnant: "Sim" | "Não" | "";
 
-  // Step 3
-  state: string;
-  city: string;
-  cep: string;
-  neighborhood: string;
-  street: string;
-  number: string;
-  complement: string;
-};
+//   // Step 3
+//   state: string;
+//   city: string;
+//   cep: string;
+//   neighborhood: string;
+//   street: string;
+//   number: string;
+//   complement: string;
+// };
 
 export type SignInType = {
   email: string;
@@ -119,7 +118,6 @@ export interface UseStoreReturn extends StoreState {
 }
 
 export type TokenResetPasswordType = z.infer<typeof tokenResetPasswordSchema>;
-export type SignUpType = z.infer<typeof signupSchema>;
 
 export type SignUpStore = {
   step1: Step1Data | null;
