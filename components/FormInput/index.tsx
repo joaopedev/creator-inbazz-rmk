@@ -1,10 +1,10 @@
 // Atualize seu FormInput para aceitar um botão extra
 
-import { ReactNode } from 'react';
-import { Control, Controller, FieldValues, Path } from 'react-hook-form';
-import { KeyboardTypeOptions, View } from 'react-native';
-import { useFocusInput } from '../../hooks/useFocusInput';
-import { Input } from '../Input';
+import { ReactNode } from "react";
+import { Control, Controller, FieldValues, Path } from "react-hook-form";
+import { KeyboardTypeOptions, View } from "react-native";
+import { useFocusInput } from "../../hooks/useFocusInput";
+import { Input } from "../Input";
 
 interface FormInputProps<T extends FieldValues> {
   label: string;
@@ -21,8 +21,10 @@ interface FormInputProps<T extends FieldValues> {
   colorLabel?: string;
   required?: boolean;
   keyboardType?: KeyboardTypeOptions;
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
   secureTextEntry?: boolean;
+  multiline?: boolean;
+  textArea?: boolean;
   buttonRight?: ReactNode;
 }
 
@@ -42,10 +44,20 @@ export function FormInput<T extends FieldValues>({
   paddingRightIcon = 0,
   paddingTopLabel = 0,
   paddingLeftLabel = 9,
-  colorLabel = 'black',
-  buttonRight,
+  colorLabel = "black",
+  multiline = true,
+  textArea = false,
+  buttonRight = false,
 }: FormInputProps<T>) {
   const { isFocused, handleFocus, handleBlur } = useFocusInput();
+
+  const textAreaStyle = textArea
+    ? {
+        height: 120,
+        textAlignVertical: "top" as "top", 
+        paddingTop: 12,
+      }
+    : {};
 
   return (
     <Input.Root>
@@ -60,7 +72,7 @@ export function FormInput<T extends FieldValues>({
         name={name}
         control={control}
         render={({ field: { onChange, value } }) => (
-          <View style={{ position: 'relative' }}>
+          <View style={{ position: "relative" }}>
             {iconLeft && <Input.Icon position="left">{iconLeft}</Input.Icon>}
             <Input.Field
               onChangeText={onChange}
@@ -73,10 +85,14 @@ export function FormInput<T extends FieldValues>({
               secureTextEntry={secureTextEntry}
               error={error}
               isFocused={isFocused}
+              multiline={multiline}      
+              style={textAreaStyle} 
             />
             {iconRight && <Input.Icon position="right">{iconRight}</Input.Icon>}
             {buttonRight && (
-              <View style={{ position: 'absolute', right: 0, top: 12 }}>{buttonRight}</View>
+              <View style={{ position: "absolute", right: 0, top: 12 }}>
+                {buttonRight}
+              </View>
             )}
           </View>
         )}
