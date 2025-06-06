@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
-const step1Schema = z
+export const step1Schema = z
     .object({
         name: z.string().min(1, "Nome obrigatório"),
         lastName: z.string().min(1, "Sobrenome obrigatório"),
