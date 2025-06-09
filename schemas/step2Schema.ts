@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const step2Schema = z.object({
-  ddd: z.string(),
-  phone_number: z.string(),
-  birthday: z.string(),
+  phoneDDD: z.string(),
+  phoneNumber: z.string(),
+  birthDate: z.string(),
   gender: z
     .enum([
       "Feminino",
@@ -13,7 +13,7 @@ export const step2Schema = z.object({
       "Prefiro não dizer",
     ])
     .default("Masculino"),
-  description: z.string(),
+  aboutYou: z.string(),
   haveAgent: z.enum(["Sim", "Não", ""]),
 });
 
