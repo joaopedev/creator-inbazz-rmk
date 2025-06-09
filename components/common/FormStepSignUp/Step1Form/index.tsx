@@ -26,20 +26,20 @@ export const Step1Form = ({ onNext }: Step1Props) => {
     resolver: zodResolver(step1Schema),
     defaultValues: {
       name: "",
-      last_name: "",
-      doc: "",
+      lastName: "",
+      cpf: "",
       email: "",
       confirmEmail: "",
       password: "",
       confirmPassword: "",
       username: "",
-      ttk_user: "",
+      tiktok: "",
       agreeTerms: false,
     },
   });
 
   const emailValue = useWatch({ control, name: "email" });
-  const cpfValue = useWatch({ control, name: "doc" });
+  const cpfValue = useWatch({ control, name: "cpf" });
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const [isCheckingCpf, setIsCheckingCpf] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -53,20 +53,18 @@ export const Step1Form = ({ onNext }: Step1Props) => {
   const [loadingInstagram, setLoadingInstagram] = useState(false);
 
   const formatCpf = (input: string) => {
-    let formatted = input.replace(/\D/g, "");
-    if (formatted.length > 3 && formatted.length <= 6) {
-      formatted = formatted.replace(/(\d{3})(\d{1,})/, "$1.$2");
-    } else if (formatted.length > 6 && formatted.length <= 9) {
-      formatted = formatted.replace(/(\d{3})(\d{3})(\d{1,})/, "$1.$2.$3");
-    }
-    return formatted;
-  };
+    // Remove tudo que não for número
+    let digits = input.replace(/\D/g, "").slice(0, 11);
 
-  console.log(errors)
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+    if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9, 11)}`;
+  };
 
   const handleChangeCpf = (text: string) => {
     const formatted = formatCpf(text);
-    setValue("doc", formatted);
+    setValue("cpf", formatted);
   };
 
   const validateInstagram = async () => {
@@ -113,17 +111,17 @@ export const Step1Form = ({ onNext }: Step1Props) => {
           .then((response) => {
             const data = response.data;
             if (Array.isArray(data) && data.length > 0) {
-              setError("doc", {
+              setError("cpf", {
                 type: "manual",
                 message: "CPF já cadastrado",
               });
             } else {
-              clearErrors("doc");
+              clearErrors("cpf");
             }
           })
           .catch((err) => {
             console.error("Erro ao verificar CPF no backend:", err);
-            setError("doc", {
+            setError("cpf", {
               type: "manual",
               message: "Erro ao verificar CPF. Tente novamente.",
             });
@@ -132,7 +130,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
             setIsCheckingCpf(false);
           });
       } else {
-        clearErrors("doc");
+        clearErrors("cpf");
       }
     }, 500);
 
@@ -192,21 +190,22 @@ export const Step1Form = ({ onNext }: Step1Props) => {
       <FormInput
         paddingTopLabel={20}
         label="Sobrenome"
-        name="last_name"
+        name="lastName"
         placeholder="Insira seu sobrenome"
         control={control}
-        error={errors.last_name?.message}
+        error={errors.lastName?.message}
         required
       />
       <FormInput
         paddingTopLabel={20}
         label="CPF"
-        name="doc"
+        name="cpf"
         placeholder="00000000000"
         control={control}
-        error={errors.doc?.message}
+        error={errors.cpf?.message}
         required
         keyboardType="numeric"
+        onChangeText={handleChangeCpf}
       />
       {isCheckingCpf && (
         <Text style={styles.info}>Verificando CPF no servidor...</Text>
@@ -310,10 +309,10 @@ export const Step1Form = ({ onNext }: Step1Props) => {
       <FormInput
         paddingTopLabel={20}
         label="Tiktok"
-        name="ttk_user"
+        name="tiktok"
         placeholder="Seu usuário (ex: @fulano)"
         control={control}
-        error={errors.ttk_user?.message}
+        error={errors.tiktok?.message}
       />
 
       <Controller

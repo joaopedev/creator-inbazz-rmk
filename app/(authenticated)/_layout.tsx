@@ -15,7 +15,7 @@ export default function TabsLayout() {
           backgroundColor: "transparent",
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 10,
         },
         tabBarBackground: () => (
           <LinearGradient colors={["#fff", "#fff"]} style={{ flex: 1 }} />

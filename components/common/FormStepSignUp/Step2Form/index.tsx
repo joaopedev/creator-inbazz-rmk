@@ -20,20 +20,60 @@ export const Step2Form = ({ onNext }: Step2Props) => {
     handleSubmit,
     formState: { errors, isValid },
     watch,
+    setValue,
   } = useForm<Step2Data>({
     mode: "onChange",
     resolver: zodResolver(step2Schema),
     defaultValues: {
-      ddd: "",
-      phone_number: "",
-      birthday: "",
+      phoneDDD: "",
+      phoneNumber: "",
+      birthDate: "",
       gender: "Masculino",
-      description: "",
+      aboutYou: "",
       haveAgent: "Sim",
     },
   });
   const { setStep2 } = useSignUpStore();
   const router = useRouter();
+
+  const formatBirthDate = (input: string) => {
+    let formatted = input.replace(/\D/g, "");
+    if (formatted.length <= 2) {
+      return formatted; // Dia
+    }
+    if (formatted.length <= 4) {
+      return `${formatted.slice(0, 2)}/${formatted.slice(2)}`;
+    }
+    return `${formatted.slice(0, 2)}/${formatted.slice(2, 4)}/${formatted.slice(
+      4,
+      8
+    )}`;
+  };
+
+  const formatPhone = (input: string) => {
+    let formatted = input.replace(/\D/g, "");
+    if (formatted.length <= 2) {
+      return `+${formatted}`;
+    }
+    if (formatted.length <= 6) {
+      return `+${formatted.slice(0, 2)} ${formatted.slice(2)}`;
+    }
+    return `+${formatted.slice(0, 2)} ${formatted.slice(
+      2,
+      7
+    )}-${formatted.slice(7, 11)}`;
+  };
+
+  const handlePhoneChange = (text: string) => {
+    const formatted = formatPhone(text);
+    setValue("phoneNumber", formatted); // Atualiza o número de telefone
+  };
+
+  const handleBirthDateChange = (text: string) => {
+    const formatted = formatBirthDate(text);
+    setValue("birthDate", formatted); // Atualiza a data de nascimento
+  };
+
   const pickerSelectStyles = {
     inputIOS: {
       fontSize: 14,
@@ -81,33 +121,35 @@ export const Step2Form = ({ onNext }: Step2Props) => {
         <View style={styles.dddContainer}>
           <FormInput
             label="DDD"
-            name="ddd"
+            name="phoneDDD"
             placeholder="+55"
             control={control}
-            error={errors.ddd?.message}
+            error={errors.phoneDDD?.message}
             required
           />
         </View>
         <View style={styles.phoneContainer}>
           <FormInput
             label="Telefone"
-            name="phone_number"
+            name="phoneNumber"
             placeholder="(00) 0000-0000"
             control={control}
-            error={errors.phone_number?.message}
+            error={errors.phoneNumber?.message}
             required
+            onChangeText={handlePhoneChange}
           />
         </View>
       </View>
       <FormInput
         paddingTopLabel={20}
         label="Data de nascimento"
-        name="birthday"
+        name="birthDate"
         placeholder="01/02/1993"
         control={control}
-        error={errors.birthday?.message}
+        error={errors.birthDate?.message}
         required
         keyboardType="numeric"
+        onChangeText={handleBirthDateChange}
       />
       {/* <FormInput
         paddingTopLabel={20}
@@ -155,10 +197,10 @@ export const Step2Form = ({ onNext }: Step2Props) => {
       <FormInput
         paddingTopLabel={20}
         label="Sobre você"
-        name="description"
+        name="aboutYou"
         placeholder="Fale sobre você"
         control={control}
-        error={errors.description?.message}
+        error={errors.aboutYou?.message}
         required
         multiline
         textArea
@@ -315,7 +357,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 14,
     flex: 1,
-    marginLeft: 8,
     backgroundColor: "#e53935",
   },
   cancelButtonText: {
@@ -327,7 +368,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     gap: 10,
-    marginTop: 20,
+    marginTop: 9,
   },
   row: {
     flexDirection: "row",

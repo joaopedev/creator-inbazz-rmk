@@ -21,21 +21,19 @@ export const Step3Form = ({ onSignUp }: Step3Props) => {
     resolver: zodResolver(step3Schema),
     defaultValues: {
       country: "",
-      address_state: "",
-      address_city: "",
+      state: "",
+      city: "",
       cep: "",
-      address_neighborhood: "",
-      address_street: "",
-      address_number: "",
-      address_complement: "",
+      neighborhood: "",
+      street: "",
+      number: "",
+      complement: "",
     },
   });
   const { setStep3 } = useSignUpStore();
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Endereço</Text>
-
       <FormInput
         paddingTopLabel={20}
         label="País"
@@ -48,10 +46,10 @@ export const Step3Form = ({ onSignUp }: Step3Props) => {
       <FormInput
         paddingTopLabel={20}
         label="Estado"
-        name="address_state"
+        name="street"
         placeholder="Escolha uma opção"
         control={control}
-        error={errors.address_state?.message}
+        error={errors.street?.message}
         required
       />
       <FormInput
@@ -68,34 +66,34 @@ export const Step3Form = ({ onSignUp }: Step3Props) => {
         paddingTopLabel={20}
         label="Cidade"
         placeholder="Vitória"
-        name="address_city"
+        name="city"
         control={control}
-        error={errors.address_city?.message}
+        error={errors.city?.message}
         required
       />
       <FormInput
         paddingTopLabel={20}
         label="Bairro"
-        name="address_neighborhood"
+        name="neighborhood"
         control={control}
-        error={errors.address_neighborhood?.message}
+        error={errors.neighborhood?.message}
         required
       />
       <FormInput
         paddingTopLabel={20}
         label="Número"
-        name="address_number"
+        name="number"
         placeholder="Insira o nº residencial"
         control={control}
-        error={errors.address_number?.message}
+        error={errors.number?.message}
         required
       />
       <FormInput
         paddingTopLabel={20}
         label="Complemento"
-        name="address_complement"
+        name="complement"
         control={control}
-        error={errors.address_complement?.message}
+        error={errors.complement?.message}
         required
       />
 

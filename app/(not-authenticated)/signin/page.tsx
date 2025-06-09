@@ -1,6 +1,7 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   ActivityIndicator,
@@ -18,13 +19,12 @@ import { useSupabaseAuth } from "../../../store/loginStore";
 import { LoginPayload } from "../../../types";
 
 export default function SigninScreen() {
-  const { login, loading, error, user } = useSupabaseAuth();
-
+  const { login, loading, error } = useSupabaseAuth();
+  const [showPassword, setShowPassword] = useState(false);
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
-    reset,
+    formState: { errors },
   } = useForm<LoginPayload>({
     mode: "onChange",
     defaultValues: {
@@ -69,6 +69,14 @@ export default function SigninScreen() {
           error={errors.password?.message}
           paddingTopLabel={20}
           colorLabel="#4E4E4E"
+          iconRight={
+            <Ionicons
+              name={showPassword ? "eye" : "eye-off"}
+              size={20}
+              onPress={() => setShowPassword(!showPassword)}
+            />
+          }
+          secureTextEntry={!showPassword}
         />
         <TouchableOpacity
           onPress={() =>
