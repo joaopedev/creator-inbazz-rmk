@@ -26,6 +26,7 @@ interface FormInputProps<T extends FieldValues> {
   multiline?: boolean;
   textArea?: boolean;
   buttonRight?: ReactNode;
+  onChangeText?: (text: string) => void;
 }
 
 export function FormInput<T extends FieldValues>({
@@ -45,9 +46,9 @@ export function FormInput<T extends FieldValues>({
   paddingTopLabel = 0,
   paddingLeftLabel = 9,
   colorLabel = "black",
-  multiline = true,
+  multiline = false,
   textArea = false,
-  buttonRight = false,
+  buttonRight = null, // Definindo como null por padrão
 }: FormInputProps<T>) {
   const { isFocused, handleFocus, handleBlur } = useFocusInput();
 
@@ -89,6 +90,8 @@ export function FormInput<T extends FieldValues>({
               style={textAreaStyle} 
             />
             {iconRight && <Input.Icon position="right">{iconRight}</Input.Icon>}
+            
+            {/* Renderizando o botão à direita, se fornecido */}
             {buttonRight && (
               <View style={{ position: "absolute", right: 0, top: 12 }}>
                 {buttonRight}
