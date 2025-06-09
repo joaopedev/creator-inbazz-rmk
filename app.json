@@ -1,13 +1,18 @@
 {
   "expo": {
-    "name": "creator-inbazz-rmk",
-    "slug": "creator-inbazz-rmk",
+    "name": "",
+    "slug": "Creator Inbazz",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/tela-splash-screen.png",
     "scheme": "creatorinbazzrmk",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/tela-splash-screen.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#546ADA"
+    },
     "ios": {
       "supportsTablet": true
     },
