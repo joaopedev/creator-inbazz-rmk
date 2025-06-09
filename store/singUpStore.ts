@@ -4,7 +4,7 @@ import { SignUpStore } from "../types/auth-data";
 import { FinalSignUpData } from "../types/FinalSignUpData";
 
 export const api = axios.create({
-  baseURL: "http://192.168.18.41:3000",
+  baseURL: "http://192.168.15.15:3000",
 });
 
 export async function signUpToBackend(data: FinalSignUpData) {
@@ -14,27 +14,27 @@ export async function signUpToBackend(data: FinalSignUpData) {
       password: data.password,
       metadata: {
         name: data.name,
-        last_name: data.last_name,
-        doc: data.doc,
+        last_name: data.lastName,
+        doc: data.cpf,
         username: data.username,
         email: data.email,
         ig_id: data.username, // use outro campo se necessário
-        ttk_user: data.ttk_user,
-        ddd: data.ddd,
-        phone_number: data.phone_number,
-        birthday: data.birthday,
+        ttk_user: data.tiktok,
+        ddd: data.phoneDDD,
+        phone_number: data.phoneNumber,
+        birthday: data.birthDate,
         gender: data.gender,
-        description: data.description,
+        description: data.aboutYou,
         additional_info: {
           haveAgent: data.haveAgent,
         },
-        address_state: data.address_state,
-        address_city: data.address_city,
+        address_state: data.state,
+        address_city: data.city,
         cep: data.cep,
-        address_neighborhood: data.address_neighborhood,
-        address_street: data.address_street,
-        address_number: data.address_number,
-        address_complement: data.address_complement,
+        address_neighborhood: data.neighborhood,
+        address_street: data.street,
+        address_number: data.number,
+        address_complement: data.complement,
       },
     });
 
@@ -55,7 +55,7 @@ export async function signIn(email: string, password: string) {
       password,
     });
 
-    return response.data; // Aqui você pode armazenar token, user info, etc.
+    return response.data;
   } catch (error: any) {
     console.error(
       "Erro no login:",
