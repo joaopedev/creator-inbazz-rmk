@@ -9,7 +9,7 @@ import { api } from "../../../../store/singUpStore";
 import { FormInput } from "../../../FormInput";
 import Spinner from "../../Spinner";
 
-interface Step1Props {
+export interface Step1Props {
   onNext: (data: Step1Data) => void;
 }
 
@@ -20,31 +20,31 @@ export const Step1Form = ({ onNext }: Step1Props) => {
     formState: { errors, isValid },
     setError,
     clearErrors,
-    setValue
+    setValue,
   } = useForm<Step1Data>({
     mode: "onChange",
     resolver: zodResolver(step1Schema),
     defaultValues: {
       name: "",
-      lastName: "",
-      cpf: "",
+      last_name: "",
+      doc: "",
       email: "",
       confirmEmail: "",
       password: "",
       confirmPassword: "",
-      instagram: "",
-      tiktok: "",
+      username: "",
+      ttk_user: "",
       agreeTerms: false,
     },
   });
 
   const emailValue = useWatch({ control, name: "email" });
-  const cpfValue = useWatch({ control, name: "cpf" });
+  const cpfValue = useWatch({ control, name: "doc" });
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const [isCheckingCpf, setIsCheckingCpf] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const instagramUsername = useWatch({ control, name: "instagram" });
+  const instagramUsername = useWatch({ control, name: "username" });
   const [isInstagramValid, setIsInstagramValid] = useState(false);
   const [instagramData, setInstagramData] = useState<{
     avatar: string;
@@ -53,18 +53,20 @@ export const Step1Form = ({ onNext }: Step1Props) => {
   const [loadingInstagram, setLoadingInstagram] = useState(false);
 
   const formatCpf = (input: string) => {
-    let formatted = input.replace(/\D/g, '');
+    let formatted = input.replace(/\D/g, "");
     if (formatted.length > 3 && formatted.length <= 6) {
-      formatted = formatted.replace(/(\d{3})(\d{1,})/, '$1.$2');
+      formatted = formatted.replace(/(\d{3})(\d{1,})/, "$1.$2");
     } else if (formatted.length > 6 && formatted.length <= 9) {
-      formatted = formatted.replace(/(\d{3})(\d{3})(\d{1,})/, '$1.$2.$3');
+      formatted = formatted.replace(/(\d{3})(\d{3})(\d{1,})/, "$1.$2.$3");
     }
     return formatted;
   };
 
+  console.log(errors)
+
   const handleChangeCpf = (text: string) => {
     const formatted = formatCpf(text);
-    setValue("cpf", formatted);
+    setValue("doc", formatted);
   };
 
   const validateInstagram = async () => {
@@ -102,69 +104,75 @@ export const Step1Form = ({ onNext }: Step1Props) => {
 
   // useEffect de verificação do CPF
   useEffect(() => {
-    const rawCpfDigits = cpfValue.replace(/\D/g, "");
-    if (rawCpfDigits.length < 11) {
-      clearErrors("cpf");
-      return;
-    }
-
-    setIsCheckingCpf(true);
-    api
-      .get(`/supabase/cpf/${rawCpfDigits}`)
-      .then((response) => {
-        const data = response.data;
-        if (Array.isArray(data) && data.length > 0) {
-          setError("cpf", {
-            type: "manual",
-            message: "CPF já cadastrado",
+    const delayDebounceFn = setTimeout(() => {
+      const rawCpfDigits = cpfValue.replace(/\D/g, "");
+      if (rawCpfDigits.length === 11) {
+        setIsCheckingCpf(true);
+        api
+          .get(`/supabase/cpf/${rawCpfDigits}`)
+          .then((response) => {
+            const data = response.data;
+            if (Array.isArray(data) && data.length > 0) {
+              setError("doc", {
+                type: "manual",
+                message: "CPF já cadastrado",
+              });
+            } else {
+              clearErrors("doc");
+            }
+          })
+          .catch((err) => {
+            console.error("Erro ao verificar CPF no backend:", err);
+            setError("doc", {
+              type: "manual",
+              message: "Erro ao verificar CPF. Tente novamente.",
+            });
+          })
+          .finally(() => {
+            setIsCheckingCpf(false);
           });
-        } else {
-          clearErrors("cpf");
-        }
-      })
-      .catch((err) => {
-        console.error("Erro ao verificar CPF no backend:", err);
-        setError("cpf", {
-          type: "manual",
-          message: "Erro ao verificar CPF. Tente novamente.",
-        });
-      })
-      .finally(() => {
-        setIsCheckingCpf(false);
-      });
+      } else {
+        clearErrors("doc");
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
   }, [cpfValue, setError, clearErrors]);
 
   // useEffect de verificação de E‐mail
   useEffect(() => {
-    if (!emailValue || !emailValue.includes("@")) {
-      clearErrors("email");
-      return;
-    }
-
-    setIsCheckingEmail(true);
-    api
-      .get(`/supabase/email/${emailValue}`)
-      .then((response) => {
-        const data = response.data;
-        if (Array.isArray(data) && data.length > 0) {
-          setError("email", {
-            type: "manual",
-            message: "E-mail já cadastrado",
+    const delayDebounceFn = setTimeout(() => {
+      if (emailValue && emailValue.includes("@") && emailValue.includes(".")) {
+        setIsCheckingEmail(true);
+        api
+          .get(`/supabase/email/${emailValue}`)
+          .then((response) => {
+            const data = response.data;
+            if (Array.isArray(data) && data.length > 0) {
+              setError("email", {
+                type: "manual",
+                message: "E-mail já cadastrado",
+              });
+            } else {
+              clearErrors("email");
+            }
+          })
+          .catch((err) => {
+            console.error("Erro ao verificar e-mail no backend:", err);
+            setError("email", {
+              type: "manual",
+              message: "Erro ao verificar e-mail. Tente novamente.",
+            });
+          })
+          .finally(() => {
+            setIsCheckingEmail(false);
           });
-        } else {
-          clearErrors("email");
-        }
-      })
-      .catch((err) => {
-        console.error("Erro ao verificar e-mail no backend:", err);
-        setError("email", {
-          type: "manual",
-          message: "Erro ao verificar e-mail. Tente novamente.",
-        });
-      })
-      .finally(() => {
-        setIsCheckingEmail(false);
-      });
+      } else {
+        clearErrors("email");
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
   }, [emailValue, setError, clearErrors]);
 
   return (
@@ -184,19 +192,19 @@ export const Step1Form = ({ onNext }: Step1Props) => {
       <FormInput
         paddingTopLabel={20}
         label="Sobrenome"
-        name="lastName"
+        name="last_name"
         placeholder="Insira seu sobrenome"
         control={control}
-        error={errors.lastName?.message}
+        error={errors.last_name?.message}
         required
       />
       <FormInput
         paddingTopLabel={20}
         label="CPF"
-        name="cpf"
+        name="doc"
         placeholder="00000000000"
         control={control}
-        error={errors.cpf?.message}
+        error={errors.doc?.message}
         required
         keyboardType="numeric"
       />
@@ -265,10 +273,10 @@ export const Step1Form = ({ onNext }: Step1Props) => {
           <FormInput
             paddingTopLabel={20}
             label="Instagram"
-            name="instagram"
+            name="username"
             placeholder="Seu usuário (ex: fulano)"
             control={control}
-            error={errors.instagram?.message}
+            error={errors.username?.message}
             required
             iconRight={
               loadingInstagram ? (
@@ -302,10 +310,10 @@ export const Step1Form = ({ onNext }: Step1Props) => {
       <FormInput
         paddingTopLabel={20}
         label="Tiktok"
-        name="tiktok"
+        name="ttk_user"
         placeholder="Seu usuário (ex: @fulano)"
         control={control}
-        error={errors.tiktok?.message}
+        error={errors.ttk_user?.message}
       />
 
       <Controller

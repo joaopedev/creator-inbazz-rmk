@@ -9,7 +9,7 @@ import { Step2Data, step2Schema } from "../../../../schemas/step2Schema";
 import { useSignUpStore } from "../../../../store/singUpStore";
 import { FormInput } from "../../../FormInput";
 
-interface Step2Props {
+export interface Step2Props {
   onNext: (data: Step2Data) => void;
   onBack: () => void;
 }
@@ -24,11 +24,11 @@ export const Step2Form = ({ onNext }: Step2Props) => {
     mode: "onChange",
     resolver: zodResolver(step2Schema),
     defaultValues: {
-      phoneDDD: "",
-      phoneNumber: "",
-      birthDate: "",
+      ddd: "",
+      phone_number: "",
+      birthday: "",
       gender: "Masculino",
-      aboutYou: "",
+      description: "",
       haveAgent: "Sim",
     },
   });
@@ -77,31 +77,35 @@ export const Step2Form = ({ onNext }: Step2Props) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Agora, alguns dados pessoais</Text>
-      <FormInput
-        paddingTopLabel={20}
-        label="DDD"
-        name="phoneDDD"
-        placeholder="DDD ex: '027'"
-        control={control}
-        error={errors.phoneDDD?.message}
-        required
-      />
-      <FormInput
-        paddingTopLabel={20}
-        label="Telefone"
-        name="phoneNumber"
-        placeholder="(99955-0088)"
-        control={control}
-        error={errors.phoneNumber?.message}
-        required
-      />
+      <View style={styles.row}>
+        <View style={styles.dddContainer}>
+          <FormInput
+            label="DDD"
+            name="ddd"
+            placeholder="+55"
+            control={control}
+            error={errors.ddd?.message}
+            required
+          />
+        </View>
+        <View style={styles.phoneContainer}>
+          <FormInput
+            label="Telefone"
+            name="phone_number"
+            placeholder="(00) 0000-0000"
+            control={control}
+            error={errors.phone_number?.message}
+            required
+          />
+        </View>
+      </View>
       <FormInput
         paddingTopLabel={20}
         label="Data de nascimento"
-        name="birthDate"
+        name="birthday"
         placeholder="01/02/1993"
         control={control}
-        error={errors.birthDate?.message}
+        error={errors.birthday?.message}
         required
         keyboardType="numeric"
       />
@@ -134,7 +138,12 @@ export const Step2Form = ({ onNext }: Step2Props) => {
               style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false} // para que use nosso style
               Icon={() => (
-                <Ionicons name="chevron-down" size={20} color="#999" />
+                <Ionicons
+                  name="chevron-down"
+                  style={{ marginTop: 15, marginRight: 8 }}
+                  size={18}
+                  color="#999"
+                />
               )}
             />
           )}
@@ -146,10 +155,10 @@ export const Step2Form = ({ onNext }: Step2Props) => {
       <FormInput
         paddingTopLabel={20}
         label="Sobre você"
-        name="aboutYou"
+        name="description"
         placeholder="Fale sobre você"
         control={control}
-        error={errors.aboutYou?.message}
+        error={errors.description?.message}
         required
         multiline
         textArea
@@ -173,6 +182,14 @@ export const Step2Form = ({ onNext }: Step2Props) => {
               }}
               style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
+              Icon={() => (
+                <Ionicons
+                  name="chevron-down"
+                  style={{ marginTop: 15, marginRight: 8 }}
+                  size={18}
+                  color="#999"
+                />
+              )}
             />
           )}
         />
@@ -311,5 +328,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 10,
     marginTop: 20,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 8,
+    marginTop: 17,
+  },
+  dddContainer: {
+    flex: 1,
+  },
+  phoneContainer: {
+    flex: 3,
   },
 });

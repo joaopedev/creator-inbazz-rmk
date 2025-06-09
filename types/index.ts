@@ -1,25 +1,18 @@
 import {
-  TypeCalculationAdministered,
-  CalculationAdministeredForm,
-} from "./calculations";
-import {
   ForgotPasswordType,
-  SignUpType,
-  TokenType,
-  UserDataType,
+  LoginPayload,
+  ResetType,
   TokenResetPasswordType,
-  LoginPayload ,
-  ResetType
+  TokenType,
+  UserDataType
 } from "./auth-data";
+import {
+  CalculationAdministeredForm,
+  TypeCalculationAdministered,
+} from "./calculations";
 
 export {
-  TypeCalculationAdministered,
   CalculationAdministeredForm,
-  ForgotPasswordType,
-  SignUpType,
-  ResetType,
-  TokenType,
-  UserDataType,
-  TokenResetPasswordType,
-  LoginPayload 
+  ForgotPasswordType, LoginPayload, ResetType, TokenResetPasswordType, TokenType, TypeCalculationAdministered, UserDataType
 };
+

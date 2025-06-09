@@ -13,7 +13,9 @@ import { StepIndicator } from "../../../components/StepIndicator";
 import { Step1Form } from "../../../components/common/FormStepSignUp/Step1Form";
 import { Step2Form } from "../../../components/common/FormStepSignUp/Step2Form";
 import { Step3Form } from "../../../components/common/FormStepSignUp/Step3Form";
+import { Step3Data } from "../../../schemas/step3Schema";
 import { signUpToBackend } from "../../../store/singUpStore";
+import { FinalSignUpData } from "../../../types/FinalSignUpData";
 
 export default function SignUpScreen() {
   const [step, setStep] = useState(1);
@@ -26,17 +28,17 @@ export default function SignUpScreen() {
     setStep(step + 1);
   };
 
-  const finish = async (data: any) => {
-    const finalData = {
-      step1: formData.step1,
-      step2: formData.step2,
-      step3: data,
+  const finish = async (step3Data: Step3Data) => {
+    const finalData: FinalSignUpData = {
+      ...formData.step1,
+      ...formData.step2,
+      ...step3Data,
     };
 
     try {
       await signUpToBackend(finalData);
       router.push("/(authenticated)/home/page");
-      console.log("Usario criado:", finalData)
+      console.log("Usuário criado:", finalData);
     } catch (err) {
       console.log("Erro ao criar conta:", err);
     }

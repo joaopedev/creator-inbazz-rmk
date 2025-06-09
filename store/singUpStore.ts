@@ -1,39 +1,40 @@
 import axios from "axios";
 import { create } from "zustand";
 import { SignUpStore } from "../types/auth-data";
+import { FinalSignUpData } from "../types/FinalSignUpData";
 
 export const api = axios.create({
-  baseURL: "http://192.168.15.2:3000",
+  baseURL: "http://192.168.18.41:3000",
 });
 
-export async function signUpToBackend(data: any) {
+export async function signUpToBackend(data: FinalSignUpData) {
   try {
     const response = await api.post("/supabase", {
-      email: data.step1.email,
-      password: data.step1.password,
+      email: data.email,
+      password: data.password,
       metadata: {
-        name: data.step1.name,
-        last_name: data.step1.lastName,
-        doc: data.step1.cpf,
-        username: data.step1.username,
-        email: data.step1.email,
-        ig_id: data.step1.instagram,
-        ttk_user: data.step1.tiktok,
-        ddd: data.step2.phoneDDD,
-        phone_number: data.step2.phoneNumber,
-        birthday: data.step2.birthDate,
-        gender: data.step2.gender,
-        description: data.step2.aboutYou,
+        name: data.name,
+        last_name: data.last_name,
+        doc: data.doc,
+        username: data.username,
+        email: data.email,
+        ig_id: data.username, // use outro campo se necessário
+        ttk_user: data.ttk_user,
+        ddd: data.ddd,
+        phone_number: data.phone_number,
+        birthday: data.birthday,
+        gender: data.gender,
+        description: data.description,
         additional_info: {
-          haveAgent: data.step2.haveAgent,
+          haveAgent: data.haveAgent,
         },
-        address_state: data.step3.state,
-        address_city: data.step3.city,
-        cep: data.step3.cep,
-        address_neighborhood: data.step3.neighborhood,
-        address_street: data.step3.street,
-        address_number: data.step3.number,
-        address_complement: data.step3.complement,
+        address_state: data.address_state,
+        address_city: data.address_city,
+        cep: data.cep,
+        address_neighborhood: data.address_neighborhood,
+        address_street: data.address_street,
+        address_number: data.address_number,
+        address_complement: data.address_complement,
       },
     });
 
@@ -113,5 +114,5 @@ export const useSignUpStore = create<SignUpStore>((set) => ({
   setStep1: (data) => set({ step1: data }),
   setStep2: (data) => set({ step2: data }),
   setStep3: (data) => set({ step3: data }),
-  signUp: (data) => set({})
+  signUp: (data) => set({}),
 }));
