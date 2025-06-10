@@ -4,7 +4,7 @@ import { SignUpStore } from "../types/auth-data";
 import { FinalSignUpData } from "../types/FinalSignUpData";
 
 export const api = axios.create({
-  baseURL: "http://192.168.18.41:3000",
+  baseURL: "http://192.168.15.18:3000",
 });
 
 export async function signUpToBackend(data: FinalSignUpData) {
@@ -99,6 +99,44 @@ export async function signUp(data: any) {
     );
     throw new Error(
       error.response?.data?.message || "Erro inesperado ao criar conta."
+    );
+  }
+}
+
+export async function resetUserPassword(
+  accessToken: string,
+  newPassword: string
+) {
+  try {
+    // Chame o endpoint no seu backend que irá acionar o SupabaseService.resetPassword
+    const response = await api.post("/supabase/reset-password", {
+      accessToken,
+      newPassword,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Erro ao redefinir a senha:",
+      error.response?.data?.message || error.message
+    );
+    throw new Error(
+      error.response?.data?.message || "Erro ao redefinir a senha."
+    );
+  }
+}
+
+export async function requestPasswordReset(email: string) {
+  try {
+    // Chame o endpoint no seu backend que irá acionar o SupabaseService.forgottPassword
+    const response = await api.post("/supabase/forgot-password", { email });
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Erro ao solicitar recuperação de senha:",
+      error.response?.data?.message || error.message
+    );
+    throw new Error(
+      error.response?.data?.message || "Erro ao solicitar recuperação de senha."
     );
   }
 }
