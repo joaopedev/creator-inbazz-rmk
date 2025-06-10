@@ -1,5 +1,5 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -10,23 +10,23 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
+import { z } from "zod";
 import { FormInput } from "../../../components/FormInput";
 import { forgotPasswordSchema } from "../../../schemas";
+import { requestPasswordReset } from "../../../store/singUpStore";
 import { ForgotPasswordType } from "../../../types";
-
 
 export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
-  // const { forgotPassword } = useAuth();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<ForgotPasswordType>({
+  } = useForm<z.infer<typeof forgotPasswordSchema>>({
     mode: "onChange",
     defaultValues: {
       email: "",
@@ -37,14 +37,17 @@ export default function ForgotPassword() {
   const onSubmit = async (data: ForgotPasswordType) => {
     try {
       setLoading(true);
-      await forgotPassword(data);
+      await requestPasswordReset(data.email);
       setLoading(false);
       router.push("/(not-authenticated)/signin/page");
       reset();
-    } catch (error) {
-      console.log("error", error);
+    } catch (error: unknown) {
+      // Tipo 'unknown' é mais seguro para blocos catch
+      console.log("erro ao enviar link:", error);
       setLoading(false);
-      const err = error as AxiosError;
+      const err = error as AxiosError; // Asserção de tipo para AxiosError
+      // Você pode exibir uma mensagem de erro mais amigável ao usuário aqui
+      // Alert.alert("Erro", err.response?.data?.message || "Ocorreu um erro inesperado.");
       return err;
     }
   };
@@ -114,7 +117,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "bold",
     marginBottom: 8,
-    textAlign: "left"
+    textAlign: "left",
   },
   textSubheader: {
     color: "#4E4E4E",
