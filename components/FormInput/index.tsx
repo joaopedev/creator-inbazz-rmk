@@ -27,6 +27,7 @@ interface FormInputProps<T extends FieldValues> {
   textArea?: boolean;
   buttonRight?: ReactNode;
   onChangeText?: (text: string) => void;
+  editable?: boolean;
 }
 
 export function FormInput<T extends FieldValues>({
