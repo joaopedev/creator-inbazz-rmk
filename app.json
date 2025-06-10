@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "",
-    "slug": "Creator Inbazz",
+    "name": "Creator-Inbazz-rmk",
+    "slug": "Creator-Inbazz-rmk",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/tela-splash-screen.png",
@@ -44,6 +44,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b2953fde-b278-4021-a162-a47d7deac686"
+      }
     }
   }
 }

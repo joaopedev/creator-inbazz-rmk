@@ -101,7 +101,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={styles.navContainer}>
         <Image
-          source={require("../../../assets/images/Frame.png")}
+          source={require("../../../assets/images/logodamarca.png")}
           style={styles.logo}
         />
         <Text style={styles.navTitle}>Home</Text>

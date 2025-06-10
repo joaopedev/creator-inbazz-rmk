@@ -30,8 +30,8 @@ export default function TabsLayout() {
           tabBarIcon: ({ focused }) => (
             <TabBarImageIcon
               focused={focused}
-              activeIcon={require("../../assets/images/homeActive.png")}
-              inactiveIcon={require("../../assets/images/homeInactive.png")}
+              activeIcon={require("../../assets/images/home-active.png")}
+              inactiveIcon={require("../../assets/images/home-inactive.png")}
             />
           ),
         }}
@@ -45,8 +45,8 @@ export default function TabsLayout() {
           tabBarIcon: ({ focused }) => (
             <TabBarImageIcon
               focused={focused}
-              activeIcon={require("../../assets/images/postsActive.png")}
-              inactiveIcon={require("../../assets/images/postsInactive.png")}
+              activeIcon={require("../../assets/images/posts-active.png")}
+              inactiveIcon={require("../../assets/images/posts-inactive.png")}
             />
           ),
         }}
@@ -59,8 +59,8 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, focused }) => (
             <TabBarImageIcon
               focused={focused}
-              activeIcon={require("../../assets/images/integrationsActive.png")}
-              inactiveIcon={require("../../assets/images/integrationsInactive.png")}
+              activeIcon={require("../../assets/images/integrations-active.png")}
+              inactiveIcon={require("../../assets/images/integrations-inactive.png")}
             />
           ),
         }}
@@ -79,8 +79,8 @@ export default function TabsLayout() {
           tabBarIcon: ({ focused }) => (
             <TabBarImageIcon
               focused={focused}
-              activeIcon={require("../../assets/images/walletActive.png")}
-              inactiveIcon={require("../../assets/images/walletInactive.png")}
+              activeIcon={require("../../assets/images/wallet-active.png")}
+              inactiveIcon={require("../../assets/images/wallet-inactive.png")}
             />
           ),
         }}

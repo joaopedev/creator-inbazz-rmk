@@ -3,14 +3,14 @@ import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
-    ActivityIndicator,
-    Image,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import * as z from "zod"; // Importe o zod
 import { resetUserPassword } from "../../../store/singUpStore";
@@ -102,7 +102,7 @@ export default function ResetPasswordScreen() {
         <View style={styles.containerLogo}>
           <Image
             style={{ maxHeight: "85%", width: 176 }}
-            source={require("../../../assets/images/Logo-App-Nova.png")} // Ajuste o caminho da imagem se necessário
+            source={require("../../../assets/images/logoapp.png")} // Ajuste o caminho da imagem se necessário
           />
         </View>
 

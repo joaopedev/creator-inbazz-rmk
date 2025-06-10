@@ -246,7 +246,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         required
       />
       <FormInput
-        paddingTopLabel={20}
+        paddingTopLabel={28}
         label="Sobrenome"
         name="lastName"
         placeholder="Insira seu sobrenome"
@@ -255,7 +255,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         required
       />
       <FormInput
-        paddingTopLabel={20}
+        paddingTopLabel={28}
         label="CPF"
         name="cpf"
         placeholder="000.000.000-00"
@@ -274,7 +274,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         <Text style={styles.info}>Verificando CPF no servidor...</Text>
       )}
       <FormInput
-        paddingTopLabel={20}
+        paddingTopLabel={28}
         label="E-mail"
         name="email"
         placeholder="exemplo@dominio.com"
@@ -287,7 +287,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         <Text style={styles.info}>Verificando e-mail no servidor...</Text>
       )}
       <FormInput
-        paddingTopLabel={20}
+        paddingTopLabel={28}
         label="Confirme seu e-mail"
         name="confirmEmail"
         placeholder="Repita seu e-mail"
@@ -297,7 +297,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         keyboardType="email-address"
       />
       <FormInput
-        paddingTopLabel={20}
+        paddingTopLabel={28}
         label="Crie sua senha"
         name="password"
         placeholder="Pelo menos 6 caracteres"
@@ -314,7 +314,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         required
       />
       <FormInput
-        paddingTopLabel={20}
+        paddingTopLabel={28}
         label="Confirme sua senha"
         name="confirmPassword"
         placeholder="Repita sua senha"
@@ -333,7 +333,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
       <View style={styles.inlineRow}>
         <View style={styles.instagramInputContainer}>
           <FormInput
-            paddingTopLabel={20}
+            paddingTopLabel={28}
             label="Instagram"
             name="username"
             placeholder="Seu usuário (ex: fulano)"
@@ -370,7 +370,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         </TouchableOpacity>
       </View>
       <FormInput
-        paddingTopLabel={20}
+        paddingTopLabel={28}
         label="Tiktok"
         name="tiktok"
         placeholder="Seu usuário (ex: @fulano)"
