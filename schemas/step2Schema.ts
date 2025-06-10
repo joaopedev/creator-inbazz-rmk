@@ -8,9 +8,9 @@ export const step2Schema = z.object({
     .regex(/^\d{2}$/, "DDD deve conter apenas números"),
   phoneNumber: z
     .string()
-    .min(10, "Telefone deve ter pelo menos 10 dígitos")
-    .max(15, "Telefone não pode ter mais de 15 dígitos")
-    .regex(/^\+?\d{2} \d{5}-\d{4}$/, "Telefone inválido"),
+    .min(9, "Telefone deve ter pelo menos 9 dígitos") // Adjusted min length
+    .max(10, "Telefone não pode ter mais de 10 dígitos") // Adjusted max length
+    .regex(/^\d{4,5}-\d{4}$/, "Telefone inválido. Use o formato XXXXX-XXXX ou XXXX-XXXX"), // Updated regex
   birthDate: z
     .string()
     .transform((val) => val.replace(/\D/g, "")) // Remove máscara antes de validar
