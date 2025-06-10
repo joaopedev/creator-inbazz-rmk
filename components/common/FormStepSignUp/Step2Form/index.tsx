@@ -8,6 +8,7 @@ import RNPickerSelect from "react-native-picker-select";
 import { Step2Data, step2Schema } from "../../../../schemas/step2Schema";
 import { useSignUpStore } from "../../../../store/singUpStore";
 import { FormInput } from "../../../FormInput";
+import { formatPhone } from "../../../../utils/mask";
 
 export interface Step2Props {
   onNext: (data: Step2Data) => void;
@@ -52,23 +53,10 @@ export const Step2Form = ({ onNext, onBack, setStep, step }: Step2Props) => {
     )}`;
   };
 
-  const formatPhone = (input: string) => {
-    let formatted = input.replace(/\D/g, "");
-    if (formatted.length <= 2) {
-      return `+${formatted}`;
-    }
-    if (formatted.length <= 6) {
-      return `+${formatted.slice(0, 2)} ${formatted.slice(2)}`;
-    }
-    return `+${formatted.slice(0, 2)} ${formatted.slice(
-      2,
-      7
-    )}-${formatted.slice(7, 11)}`;
-  };
 
   const handlePhoneChange = (text: string) => {
     const formatted = formatPhone(text);
-    setValue("phoneNumber", formatted); // Atualiza o número de telefone
+    setValue("phoneNumber", formatted); // Updates the phone number
   };
 
   const handleBirthDateChange = (text: string) => {
