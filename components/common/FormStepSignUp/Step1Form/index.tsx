@@ -3,12 +3,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Step1Data, step1Schema } from "../../../../schemas/step1Schema";
 import { api } from "../../../../store/singUpStore";
 import { formatCpf } from "../../../../utils/mask";
 import { FormInput } from "../../../FormInput";
-import Spinner from "../../Spinner";
 
 export interface Step1Props {
   onNext: (data: Step1Data) => void;
@@ -41,11 +47,11 @@ export const Step1Form = ({ onNext }: Step1Props) => {
 
   const emailValue = useWatch({ control, name: "email" });
   const cpfValue = useWatch({ control, name: "cpf" });
+  const instagramUsername = useWatch({ control, name: "username" });
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const [isCheckingCpf, setIsCheckingCpf] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const instagramUsername = useWatch({ control, name: "username" });
   const [isInstagramValid, setIsInstagramValid] = useState(false);
   const [instagramData, setInstagramData] = useState<{
     avatar: string;
@@ -53,9 +59,19 @@ export const Step1Form = ({ onNext }: Step1Props) => {
   } | null>(null);
   const [loadingInstagram, setLoadingInstagram] = useState(false);
 
+  // Função para validar o Instagram usando a primeira API (EXPO_PUBLIC_INSTAGRAM_VALIDATE!)
   const validateInstagram = async () => {
-    if (!instagramUsername) return;
+    if (!instagramUsername) {
+      setError("username", {
+        type: "manual",
+        message: "Por favor, insira um nome de usuário.",
+      });
+      setIsInstagramValid(false);
+      setInstagramData(null);
+      return;
+    }
     setLoadingInstagram(true);
+    clearErrors("username"); // Limpa erros anteriores antes de validar
     try {
       const formData = new FormData();
       formData.append("user", instagramUsername);
@@ -64,23 +80,33 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         process.env.EXPO_PUBLIC_INSTAGRAM_VALIDATE!,
         { method: "POST", body: formData }
       );
-      if (!response.ok) throw new Error("Erro na resposta da API");
 
       const data = await response.json();
-      if (data && data.pfp_url && data.userdoIG) {
+
+      if (response.ok && data && data.pfp_url && data.userdoIG) {
         setInstagramData({
           avatar: data.pfp_url,
           username: data.userdoIG,
         });
-        setIsInstagramValid(true);
+        setIsInstagramValid(true); // Define como válido aqui
+        console.log("Validação inicial do Instagram bem-sucedida.");
       } else {
         setInstagramData(null);
         setIsInstagramValid(false);
+        setError("username", {
+          type: "manual",
+          message: "Usuário do Instagram inválido ou não encontrado.",
+        });
+        console.log("Validação inicial do Instagram falhou.");
       }
     } catch (error) {
-      console.error("Erro ao validar Instagram", error);
+      console.error("Erro ao validar Instagram manualmente:", error);
       setInstagramData(null);
       setIsInstagramValid(false);
+      setError("username", {
+        type: "manual",
+        message: "Erro ao verificar Instagram. Tente novamente.",
+      });
     } finally {
       setLoadingInstagram(false);
     }
@@ -89,7 +115,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
   // useEffect de verificação do CPF
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      const rawCpfDigits = cpfValue.replace(/\D/g, "");
+      const rawCpfDigits = cpfValue ? cpfValue.replace(/\D/g, "") : "";
       if (rawCpfDigits.length === 11) {
         setIsCheckingCpf(true);
         api
@@ -159,6 +185,52 @@ export const Step1Form = ({ onNext }: Step1Props) => {
     return () => clearTimeout(delayDebounceFn);
   }, [emailValue, setError, clearErrors]);
 
+  // Novo useEffect para validação do Instagram via backend (supabase/instagram)
+  // Esta busca é realizada APÓS a validação inicial (`isInstagramValid`) ser bem-sucedida
+  useEffect(() => {
+    // Só realiza a busca se o Instagram for válido (pela primeira API) e houver um nome de usuário
+    if (isInstagramValid && instagramUsername) {
+      console.log("Iniciando validação do Instagram no backend...");
+      const delayDebounceFn = setTimeout(async () => {
+        try {
+          // Realiza a busca na rota especificada
+          const response = await api.get(
+            `/supabase/instagram/${instagramUsername}`
+          );
+          const data = response.data;
+
+          // ** CORREÇÃO APLICADA AQUI: Verifique se o data é um array e se tem elementos **
+          if (Array.isArray(data) && data.length > 0) {
+            setError("username", {
+              type: "manual",
+              message: "Perfil já cadastrado. Verifique e tente novamente ou faça login.",
+            });
+            console.log("Usuário do Instagram já registrado no backend.");
+          } else {
+            clearErrors("username");
+            console.log("Usuário do Instagram não registrado no backend.");
+          }
+        } catch (error) {
+          console.error(
+            "Erro ao verificar Instagram no backend (useEffect):",
+            error
+          );
+          setError("username", {
+            type: "manual",
+            message: "Erro ao verificar Instagram no backend. Tente novamente.",
+          });
+        }
+      }, 500); // Debounce para evitar múltiplas chamadas rapidamente
+
+      return () => clearTimeout(delayDebounceFn);
+    } else if (!isInstagramValid && instagramUsername) {
+      // Se o username mudou e a validação inicial não foi feita (ou falhou),
+      // você pode querer limpar o erro do backend se houver um erro prévio do backend
+      // para permitir uma nova validação completa.
+      clearErrors("username"); // Isso limpa o erro, permitindo a validação manual novamente
+    }
+  }, [instagramUsername, isInstagramValid, setError, clearErrors]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Vamos começar!</Text>
@@ -196,7 +268,6 @@ export const Step1Form = ({ onNext }: Step1Props) => {
           const formattedCpf = formatCpf(text);
           setValue("cpf", formattedCpf); // Use setValue para atualizar o campo
         }}
-        // O `value` é gerenciado pelo Controller, então não é necessário passá-lo explicitamente
       />
 
       {isCheckingCpf && (
@@ -271,7 +342,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
             required
             iconRight={
               loadingInstagram ? (
-                <Spinner />
+                <ActivityIndicator size="small" color="#25399E" />
               ) : isInstagramValid && instagramData ? (
                 <View style={styles.instagramValidContainer}>
                   <Image
@@ -410,7 +481,7 @@ const styles = StyleSheet.create({
   },
   inlineRow: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     gap: 8,
   },
@@ -438,6 +509,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: 48,
+    marginTop: 43, // Ajustado para alinhar com o topo do campo de input (após o label)
   },
   validateButtonText: {
     color: "white",
