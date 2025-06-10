@@ -4,7 +4,7 @@ import { SignUpStore } from "../types/auth-data";
 import { FinalSignUpData } from "../types/FinalSignUpData";
 
 export const api = axios.create({
-  baseURL: "http://192.168.15.15:3000",
+  baseURL: "http://192.168.18.41:3000",
 });
 
 export async function signUpToBackend(data: FinalSignUpData) {
@@ -12,31 +12,27 @@ export async function signUpToBackend(data: FinalSignUpData) {
     const response = await api.post("/supabase", {
       email: data.email,
       password: data.password,
-      metadata: {
-        name: data.name,
-        last_name: data.lastName,
-        doc: data.cpf,
-        username: data.username,
-        email: data.email,
-        ig_id: data.username, // use outro campo se necessário
-        ttk_user: data.tiktok,
-        ddd: data.phoneDDD,
-        phone_number: data.phoneNumber,
-        birthday: data.birthDate,
-        gender: data.gender,
-        description: data.aboutYou,
-        additional_info: {
-          haveAgent: data.haveAgent,
-        },
-        address_state: data.state,
-        address_city: data.city,
-        cep: data.cep,
-        address_neighborhood: data.neighborhood,
-        address_street: data.street,
-        address_number: data.number,
-        address_complement: data.complement,
-      },
+      name: data.name,
+      lastName: data.lastName,
+      cpf: data.cpf,
+      username: data.username,
+      instagram: data.username, // use outro campo se necessário
+      tiktok: data.tiktok,
+      phoneDDD: data.phoneDDD,
+      phoneNumber: data.phoneNumber,
+      birthDate: data.birthDate,
+      gender: data.gender,
+      aboutYou: data.aboutYou,
+      haveAgent: data.haveAgent,
+      state: data.state,
+      city: data.city,
+      cep: data.cep,
+      neighborhood: data.neighborhood,
+      street: data.street,
+      number: data.number,
+      complement: data.complement,
     });
+    console.log(data);
 
     return response.data;
   } catch (error: any) {

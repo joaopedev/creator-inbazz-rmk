@@ -6,6 +6,7 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Step1Data, step1Schema } from "../../../../schemas/step1Schema";
 import { api } from "../../../../store/singUpStore";
+import { formatCpf } from "../../../../utils/mask";
 import { FormInput } from "../../../FormInput";
 import Spinner from "../../Spinner";
 
@@ -51,21 +52,6 @@ export const Step1Form = ({ onNext }: Step1Props) => {
     username: string;
   } | null>(null);
   const [loadingInstagram, setLoadingInstagram] = useState(false);
-
-  const formatCpf = (input: string) => {
-    // Remove tudo que não for número
-    let digits = input.replace(/\D/g, "").slice(0, 11);
-
-    if (digits.length <= 3) return digits;
-    if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
-    if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
-    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9, 11)}`;
-  };
-
-  const handleChangeCpf = (text: string) => {
-    const formatted = formatCpf(text);
-    setValue("cpf", formatted);
-  };
 
   const validateInstagram = async () => {
     if (!instagramUsername) return;
@@ -200,13 +186,19 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         paddingTopLabel={20}
         label="CPF"
         name="cpf"
-        placeholder="00000000000"
+        placeholder="000.000.000-00"
         control={control}
         error={errors.cpf?.message}
         required
         keyboardType="numeric"
-        onChangeText={handleChangeCpf}
+        onChangeText={(text) => {
+          // Aplica a máscara e atualiza o valor no react-hook-form
+          const formattedCpf = formatCpf(text);
+          setValue("cpf", formattedCpf); // Use setValue para atualizar o campo
+        }}
+        // O `value` é gerenciado pelo Controller, então não é necessário passá-lo explicitamente
       />
+
       {isCheckingCpf && (
         <Text style={styles.info}>Verificando CPF no servidor...</Text>
       )}
@@ -314,7 +306,6 @@ export const Step1Form = ({ onNext }: Step1Props) => {
         control={control}
         error={errors.tiktok?.message}
       />
-
       <Controller
         name="agreeTerms"
         control={control}

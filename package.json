@@ -11,11 +11,14 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "@expo/html-elements": "^0.12.5",
     "@expo/vector-icons": "^14.1.0",
+    "@gluestack-ui/actionsheet": "^0.2.53",
     "@gluestack-ui/button": "^1.0.14",
     "@gluestack-ui/icon": "^0.1.27",
     "@gluestack-ui/modal": "^0.1.41",
     "@gluestack-ui/nativewind-utils": "^1.0.26",
+    "@gluestack-ui/select": "^0.1.31",
     "@hookform/resolvers": "^5.0.1",
     "@legendapp/motion": "^2.4.0",
     "@react-native-async-storage/async-storage": "^2.1.2",
@@ -48,6 +51,7 @@
     "react-hook-form": "^7.56.4",
     "react-native": "0.79.2",
     "react-native-gesture-handler": "~2.24.0",
+    "react-native-mask-input": "^1.2.3",
     "react-native-picker-select": "^9.3.1",
     "react-native-progress-steps": "^2.0.3",
     "react-native-reanimated": "~3.17.4",

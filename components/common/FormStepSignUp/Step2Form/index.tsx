@@ -12,9 +12,11 @@ import { FormInput } from "../../../FormInput";
 export interface Step2Props {
   onNext: (data: Step2Data) => void;
   onBack: () => void;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+  step: number
 }
 
-export const Step2Form = ({ onNext }: Step2Props) => {
+export const Step2Form = ({ onNext, onBack, setStep, step }: Step2Props) => {
   const {
     control,
     handleSubmit,
@@ -250,10 +252,7 @@ export const Step2Form = ({ onNext }: Step2Props) => {
         <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
           <Text style={styles.cancelButtonText}>Cancelar</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => setStep2(null)}
-        >
+        <TouchableOpacity style={styles.backButton} onPress={() => setStep(step -1)}>
           <Text style={styles.backButtonText}>Voltar</Text>
         </TouchableOpacity>
       </View>

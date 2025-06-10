@@ -64,7 +64,7 @@ export default function SignUpScreen() {
 
           <StepIndicator step={step} />
           {step === 1 && <Step1Form onNext={nextStep} />}
-          {step === 2 && <Step2Form onNext={nextStep} onBack={goToBack} />}
+          {step === 2 && <Step2Form step={step} setStep={setStep} onNext={nextStep} onBack={goToBack} />}
           {step === 3 && <Step3Form onSignUp={finish} onBack={goToBack} />}
         </ScrollView>
       </KeyboardAvoidingView>

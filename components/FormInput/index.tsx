@@ -48,14 +48,15 @@ export function FormInput<T extends FieldValues>({
   colorLabel = "black",
   multiline = false,
   textArea = false,
-  buttonRight = null, // Definindo como null por padrão
+  buttonRight = null,
+  onChangeText, // Definindo como null por padrão
 }: FormInputProps<T>) {
   const { isFocused, handleFocus, handleBlur } = useFocusInput();
 
   const textAreaStyle = textArea
     ? {
         height: 120,
-        textAlignVertical: "top" as "top", 
+        textAlignVertical: "top" as "top",
         paddingTop: 12,
       }
     : {};
@@ -76,7 +77,10 @@ export function FormInput<T extends FieldValues>({
           <View style={{ position: "relative" }}>
             {iconLeft && <Input.Icon position="left">{iconLeft}</Input.Icon>}
             <Input.Field
-              onChangeText={onChange}
+              onChangeText={(text) => {
+                onChange(text); // Atualiza o valor do react-hook-form
+                onChangeText?.(text); // Chama o onChangeText customizado, se houver
+              }}
               value={value}
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -86,12 +90,10 @@ export function FormInput<T extends FieldValues>({
               secureTextEntry={secureTextEntry}
               error={error}
               isFocused={isFocused}
-              multiline={multiline}      
-              style={textAreaStyle} 
+              multiline={multiline}
+              style={textAreaStyle}
             />
             {iconRight && <Input.Icon position="right">{iconRight}</Input.Icon>}
-            
-            {/* Renderizando o botão à direita, se fornecido */}
             {buttonRight && (
               <View style={{ position: "absolute", right: 0, top: 12 }}>
                 {buttonRight}

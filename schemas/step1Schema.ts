@@ -6,7 +6,19 @@ export const step1Schema = z
   .object({
     name: z.string().min(1, "Nome obrigatório"),
     lastName: z.string().min(1, "Sobrenome obrigatório"),
-    cpf: z.string().regex(/^\d{11}$/, "CPF inválido"),
+    cpf: z
+      .string({
+        required_error: "CPF é obrigatório.",
+      })
+      .transform((val) => val.replace(/\D/g, ""))
+      .refine((doc) => {
+        const replacedDoc = doc.replace(/\D/g, "");
+        return replacedDoc.length >= 11;
+      }, "CPF deve conter no mínimo 11 caracteres.")
+      .refine((doc) => {
+        const replacedDoc = doc.replace(/\D/g, "");
+        return !!Number(replacedDoc);
+      }, "CPF deve conter apenas números."),
     email: z.string().email("Email inválido"),
     confirmEmail: z.string().email("Confirmação de email inválida"),
     password: z.string().regex(passwordRegex, "Senha fraca"),

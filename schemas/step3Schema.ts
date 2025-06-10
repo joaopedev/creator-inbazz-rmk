@@ -3,7 +3,10 @@ import { z } from "zod";
 export const step3Schema = z.object({
   state: z.string(),
   city: z.string(),
-  cep: z.string(),
+  cep: z
+    .string()
+    .transform((val) => val.replace(/\D/g, ""))
+    .refine((val) => val.length === 8, "CEP deve conter 8 dígitos."),
   neighborhood: z.string(),
   street: z.string(),
   number: z.string(),
