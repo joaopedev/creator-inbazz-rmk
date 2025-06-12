@@ -71,7 +71,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
       return;
     }
     setLoadingInstagram(true);
-    clearErrors("username"); // Limpa erros anteriores antes de validar
+    clearErrors("username");
     try {
       const formData = new FormData();
       formData.append("user", instagramUsername);
@@ -88,7 +88,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
           avatar: data.pfp_url,
           username: data.userdoIG,
         });
-        setIsInstagramValid(true); // Define como válido aqui
+        setIsInstagramValid(true);
         console.log("Validação inicial do Instagram bem-sucedida.");
       } else {
         setInstagramData(null);
@@ -336,7 +336,7 @@ export const Step1Form = ({ onNext }: Step1Props) => {
             paddingTopLabel={28}
             label="Instagram"
             name="username"
-            placeholder="Seu usuário (ex: fulano)"
+            placeholder="(ex: inbazz.br)"
             control={control}
             error={errors.username?.message}
             required
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: 48,
-    marginTop: 43, // Ajustado para alinhar com o topo do campo de input (após o label)
+    marginTop: 50, // Ajustado para alinhar com o topo do campo de input (após o label)
   },
   validateButtonText: {
     color: "white",
