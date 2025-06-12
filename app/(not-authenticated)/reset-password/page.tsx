@@ -12,21 +12,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import * as z from "zod"; // Importe o zod
+import { ResetPasswordData, ResetPasswordSchema } from "../../../schemas/reset-password";
 import { resetUserPassword } from "../../../store/singUpStore";
-
-// Schema Zod para a nova senha e confirmação
-const ResetPasswordSchema = z
-  .object({
-    newPassword: z.string().min(6, "A senha deve ter pelo menos 6 caracteres."),
-    confirmNewPassword: z.string(),
-  })
-  .refine((data) => data.newPassword === data.confirmNewPassword, {
-    message: "As senhas não coincidem.",
-    path: ["confirmNewPassword"],
-  });
-
-type ResetPasswordData = z.infer<typeof ResetPasswordSchema>;
 
 export default function ResetPasswordScreen() {
   const {
@@ -39,11 +26,11 @@ export default function ResetPasswordScreen() {
     resolver: zodResolver(ResetPasswordSchema),
   });
 
-  const { access_token } = useLocalSearchParams(); // Pega o token da URL
+  const { access_token } = useLocalSearchParams(); 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [tokenLoaded, setTokenLoaded] = useState(false); // Para controlar o carregamento do token
+  const [tokenLoaded, setTokenLoaded] = useState(false); 
 
   useEffect(() => {
     // Verifica se o access_token está presente na URL

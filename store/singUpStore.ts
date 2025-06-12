@@ -63,46 +63,6 @@ export async function signIn(email: string, password: string) {
   }
 }
 
-export async function signUp(data: any) {
-  try {
-    const response = await api.post("/supabase", {
-      email: data.step1.email,
-      password: data.step1.password,
-      metadata: {
-        name: data.step1.name,
-        last_name: data.step1.lastName,
-        doc: data.step1.cpf,
-        username: data.step1.username,
-        instagram: data.step1.instagram,
-        tiktok: data.step1.tiktok,
-        phoneDDD: data.step2.phoneDDD,
-        phoneNumber: data.step2.phoneNumber,
-        birthDate: data.step2.birthDate,
-        gender: data.step2.gender,
-        aboutYou: data.step2.aboutYou,
-        haveAgent: data.step2.haveAgent,
-        state: data.step3.state,
-        city: data.step3.city,
-        cep: data.step3.cep,
-        neighborhood: data.step3.neighborhood,
-        street: data.step3.street,
-        number: data.step3.number,
-        complement: data.step3.complement,
-      },
-    });
-
-    return response.data;
-  } catch (error: any) {
-    console.error(
-      "Erro no cadastro:",
-      error.response?.data?.message || error.message
-    );
-    throw new Error(
-      error.response?.data?.message || "Erro inesperado ao criar conta."
-    );
-  }
-}
-
 export async function resetUserPassword(
   accessToken: string,
   newPassword: string
