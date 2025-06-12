@@ -4,7 +4,7 @@ import { SignUpStore } from "../types/auth-data";
 import { FinalSignUpData } from "../types/FinalSignUpData";
 
 export const api = axios.create({
-  baseURL: "http://192.168.15.18:3000",
+  baseURL: "http://192.168.18.41:3000",
 });
 
 export async function signUpToBackend(data: FinalSignUpData) {

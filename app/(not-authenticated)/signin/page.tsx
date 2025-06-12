@@ -119,16 +119,14 @@ export default function SigninScreen() {
           label=""
           name="email"
           placeholder="Insira seu email"
-          required={true}
           control={control}
           error={errors.email?.message} // Passando a mensagem de erro específica do campo
         />
-        <Text style={[styles.textHeader, { marginTop: 20 }]}>Senha</Text>
+        <Text style={[styles.textHeader, { marginTop: 30 }]}>Senha</Text>
         <FormInput
           label=""
           name="password"
           placeholder="Insira sua senha"
-          required={true}
           control={control}
           error={errors.password?.message} // Passando a mensagem de erro específica do campo
           iconRight={
@@ -280,15 +278,13 @@ const styles = StyleSheet.create({
     color: "#4E4E4E",
     fontSize: 13,
     fontFamily: "Manrope_700Bold",
-    marginBottom: 8,
     textAlign: "left",
   },
   textSubheader: {
     color: "#4E4E4E",
     fontSize: 14,
     fontFamily: "Manrope_400Regular",
-    textAlign: "left",
-    marginBottom: 20,
+    textAlign: "left"
   },
   // Estilo para a mensagem de erro geral
   generalErrorMessage: {

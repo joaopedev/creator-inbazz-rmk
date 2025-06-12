@@ -1,4 +1,4 @@
-import { StyleProp, Text, TextStyle } from "react-native";
+import { Text } from "react-native";
 
 interface InputLabelProps {
   label: string;

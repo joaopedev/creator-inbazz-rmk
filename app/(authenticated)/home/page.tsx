@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import HeaderIcon from "../../../components/HeaderIcon";
 
 const metricasData = [
   { id: "1", titulo: "Interações", valor: 127 },
@@ -55,7 +56,6 @@ const campanhasData = [
 
 export default function HomeScreen() {
   const [activeTab, setActiveTab] = useState("Em andamento");
-  const [menuVisible, setMenuVisible] = useState(false);
   const router = useRouter();
 
   const renderMetricCard = ({ item }: { item: (typeof metricasData)[0] }) => (
@@ -97,6 +97,13 @@ export default function HomeScreen() {
     router.replace("/(not-authenticated)/signin/page");
   };
 
+  const menuItems = [
+    {
+      label: "Sair",
+      onPress: handleLogout,
+    },
+  ];
+
   return (
     <View style={styles.container}>
       <View style={styles.navContainer}>
@@ -106,30 +113,11 @@ export default function HomeScreen() {
         />
         <Text style={styles.navTitle}>Home</Text>
 
-        {/* 
-          Ao clicar nesta imagem, alternamos a visibilidade do menu de logout.
-          Coloquei position: "relative" neste container para que o menu possa
-          aparecer em posição absoluta em relação a este View. 
-        */}
-        <View style={styles.profileWrapper}>
-          <TouchableOpacity onPress={() => setMenuVisible((v) => !v)}>
-            <Image
-              source={{ uri: "https://randomuser.me/api/portraits/men/32.jpg" }}
-              style={styles.profileImage}
-            />
-          </TouchableOpacity>
-
-          {menuVisible && (
-            <View style={styles.logoutMenu}>
-              <TouchableOpacity
-                style={styles.logoutButton}
-                onPress={handleLogout}
-              >
-                <Text style={styles.logoutText}>Sair</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
+        {/* Usando HeaderIcon com menuItems e ícone */}
+        <HeaderIcon
+          items={menuItems}
+          source={{ uri: "https://randomuser.me/api/portraits/men/32.jpg" }}
+        />
       </View>
 
       <ScrollView
@@ -203,7 +191,8 @@ const styles = StyleSheet.create({
   navContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "space-between", // Isso vai garantir que os itens ocupem as extremidades e o meio
+    width: "100%",
   },
   logo: {
     width: 24,
@@ -214,42 +203,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     color: "#000",
+    textAlign: "center", // Centraliza o título entre logo e ícone
+    flex: 1, // Deixa o título expandir para ocupar o espaço entre a logo e o ícone
   },
-  profileWrapper: {
-    position: "relative",
-  },
-  profileImage: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-  },
-  logoutMenu: {
-    position: "absolute",
-    top: 50,
-    right: 0,
-    backgroundColor: "#fff",
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 5,
-    zIndex: 10,
-  },
-  logoutButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-  },
-  logoutText: {
-    fontSize: 14,
-    color: "#e53935",
-    fontWeight: "600",
-  },
-
   banner: {
     borderRadius: 10,
     padding: 20,

@@ -1,9 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Step3Data, step3Schema } from "../../../../schemas/step3Schema";
-import { useSignUpStore } from "../../../../store/singUpStore";
 import { FormInput } from "../../../FormInput";
 
 export interface Step3Props {
@@ -19,7 +24,7 @@ export const Step3Form = ({ onSignUp, onBack, setStep, step }: Step3Props) => {
     handleSubmit,
     formState: { errors, isValid },
     setValue,
-    watch,
+    watch, // 'watch' está sendo importado mas não utilizado diretamente no corpo do componente
   } = useForm<Step3Data>({
     mode: "onChange",
     resolver: zodResolver(step3Schema),
@@ -35,7 +40,8 @@ export const Step3Form = ({ onSignUp, onBack, setStep, step }: Step3Props) => {
     },
   });
 
-  const { setStep3 } = useSignUpStore();
+  // O useSignUpStore não está sendo usado no componente, pode ser removido se não for necessário.
+  // const { setStep3 } = useSignUpStore();
   const [loadingCep, setLoadingCep] = useState(false);
 
   // Função para formatar o CEP: remove não-dígitos e adiciona o hífen
@@ -58,7 +64,9 @@ export const Step3Form = ({ onSignUp, onBack, setStep, step }: Step3Props) => {
     if (cleanedCep.length === 8) {
       setLoadingCep(true); // Exibe o indicador de carregamento
       try {
-        const response = await fetch(`https://viacep.com.br/ws/${cleanedCep}/json/`);
+        const response = await fetch(
+          `https://viacep.com.br/ws/${cleanedCep}/json/`
+        );
         const data = await response.json();
 
         // Verifica se os dados são válidos e se não houve erro da ViaCEP
@@ -122,8 +130,12 @@ export const Step3Form = ({ onSignUp, onBack, setStep, step }: Step3Props) => {
         required
         keyboardType="numeric"
         onChangeText={handleCepChange} // Mantém o handler para a busca do CEP
+        // AQUI ESTÁ A MUDANÇA: Passa o ActivityIndicator para o buttonRight
+        buttonRight={
+          loadingCep ? <ActivityIndicator size="small" color="#25399E" /> : null
+        }
       />
-      {loadingCep && <ActivityIndicator size="small" color="#25399E" style={{ marginTop: -10, marginBottom: 10 }} />}
+      {/* O ActivityIndicator NÃO ESTÁ MAIS AQUI */}
       <FormInput
         paddingTopLabel={20}
         label="Cidade"
@@ -170,7 +182,10 @@ export const Step3Form = ({ onSignUp, onBack, setStep, step }: Step3Props) => {
       />
 
       <TouchableOpacity
-        style={[styles.submitButton, (!isValid || loadingCep) && styles.disabledButton]}
+        style={[
+          styles.submitButton,
+          (!isValid || loadingCep) && styles.disabledButton,
+        ]}
         disabled={!isValid || loadingCep}
         onPress={handleSubmit(onSignUp)}
       >
@@ -198,18 +213,20 @@ const styles = StyleSheet.create({
     marginLeft: 3,
   },
   subtitle: {
+    // Não utilizado neste componente, mas mantido
     fontSize: 14,
     color: "#666",
     textAlign: "left",
     marginBottom: 20,
   },
   checkboxRow: {
+    // Não utilizado neste componente, mas mantido
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 10,
   },
-  checkboxText: { marginLeft: 10, fontSize: 14 },
-  link: { color: "#25399E", textDecorationLine: "underline" },
+  checkboxText: { marginLeft: 10, fontSize: 14 }, // Não utilizado neste componente, mas mantido
+  link: { color: "#25399E", textDecorationLine: "underline" }, // Não utilizado neste componente, mas mantido
   error: { color: "red", fontSize: 12, marginTop: -8, marginBottom: 8 },
   submitButton: {
     backgroundColor: "#25399E",
@@ -220,6 +237,7 @@ const styles = StyleSheet.create({
   submitText: { color: "white", textAlign: "center", fontWeight: "bold" },
   disabledButton: { backgroundColor: "#A8B1D0" },
   validateButtonText: {
+    // Não utilizado neste componente, mas mantido
     color: "white",
     fontWeight: "bold",
   },
@@ -236,23 +254,28 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   loginRow: {
+    // Não utilizado neste componente, mas mantido
     marginTop: 24,
     alignItems: "center",
   },
   loginText: {
+    // Não utilizado neste componente, mas mantido
     color: "#000",
     fontSize: 14,
   },
   inlineRow: {
+    // Não utilizado neste componente, mas mantido
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "space-between",
     gap: 8,
   },
   instagramInputContainer: {
+    // Não utilizado neste componente, mas mantido
     flexBasis: "65%",
   },
   validateButton: {
+    // Não utilizado neste componente, mas mantido
     flexBasis: "30%",
     backgroundColor: "#25399E",
     borderRadius: 8,
